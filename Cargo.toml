@@ -1,0 +1,34 @@
+[package]
+name = "winget-types"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "WinGet Types"
+repository = "https://github.com/russellbanks/winget-types"
+license = "MIT OR Apache-2.0"
+keywords = ["winget"]
+
+[dependencies]
+base16ct = { version = "0.2", features = ["std"] }
+bitflags = "2.9"
+camino = { version = "1", features = ["serde1"] }
+chrono = { version = "0.4", features = ["serde"] }
+compact_str = { version = "0.9", features = ["serde"] }
+const_format = { version = "0.2", features = ["derive"] }
+derive_more = { version = "2", features = ["deref", "deref_mut", "display", "from_str", "into", "into_iterator"] }
+heapless = { version = "0.8", features = ["serde"] }
+icu_locid = { version = "1.5", features = ["serde"] }
+itertools = "0.14"
+package-family-name = { version = "2", features = ["serde"] }
+percent-encoding = "2"
+serde = { version = "1", features = ["derive"] }
+serde_with = { version = "3", default-features = false, features = ["macros"] }
+sha2 = "0.10"
+smallvec = { version = "1.14", features = ["union"] }
+thiserror = "2"
+url = { version = "2", features = ["serde"] }
+
+[dev-dependencies]
+indoc = "2"
+rstest = "0.25"
+serde_yaml = "0.9"
