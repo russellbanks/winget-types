@@ -1,3 +1,3 @@
-use crate::installer::switches::switch::InstallerSwitch;
+use super::switch::InstallerSwitch;
 
 pub type UpgradeSwitch = InstallerSwitch<512>;

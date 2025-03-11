@@ -1,19 +1,10 @@
-use std::{
-    fmt,
-    fmt::{Display, Formatter},
-    str::FromStr,
-};
+use core::{fmt, str::FromStr};
 
 use bitflags::bitflags;
-use serde::{
-    Deserialize, Deserializer, Serialize, Serializer,
-    de::{SeqAccess, Visitor},
-    ser::SerializeSeq,
-};
 use thiserror::Error;
 
 bitflags! {
-    /// A list of installer supported operating systems internally represented as bit flags
+    /// A list of installer supported operating systems internally represented as bit flags.
     #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
     pub struct Platform: u8 {
         const WINDOWS_DESKTOP = 1;
@@ -24,8 +15,8 @@ bitflags! {
 const WINDOWS_DESKTOP: &str = "Windows.Desktop";
 const WINDOWS_UNIVERSAL: &str = "Windows.Universal";
 
-impl Display for Platform {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+impl fmt::Display for Platform {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             Self::WINDOWS_DESKTOP => f.write_str(WINDOWS_DESKTOP),
             Self::WINDOWS_UNIVERSAL => f.write_str(WINDOWS_UNIVERSAL),
@@ -50,11 +41,14 @@ impl FromStr for Platform {
     }
 }
 
-impl Serialize for Platform {
+#[cfg(feature = "serde")]
+impl serde::Serialize for Platform {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer,
+        S: serde::Serializer,
     {
+        use serde::ser::SerializeSeq;
+
         let mut seq = serializer.serialize_seq(Some(self.iter().count()))?;
         for platform in self.iter() {
             match platform {
@@ -67,23 +61,24 @@ impl Serialize for Platform {
     }
 }
 
-impl<'de> Deserialize<'de> for Platform {
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for Platform {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: Deserializer<'de>,
+        D: serde::Deserializer<'de>,
     {
         struct PlatformVisitor;
 
-        impl<'de> Visitor<'de> for PlatformVisitor {
+        impl<'de> serde::de::Visitor<'de> for PlatformVisitor {
             type Value = Platform;
 
-            fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("a sequence of platform strings")
             }
 
             fn visit_seq<V>(self, mut seq: V) -> Result<Self::Value, V::Error>
             where
-                V: SeqAccess<'de>,
+                V: serde::de::SeqAccess<'de>,
             {
                 let mut platform = Platform::empty();
 
@@ -110,11 +105,14 @@ impl<'de> Deserialize<'de> for Platform {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(feature = "serde")]
     use indoc::indoc;
+    #[cfg(feature = "serde")]
     use rstest::rstest;
 
-    use crate::installer::{Platform, platform::PlatformParseError};
+    use super::{Platform, PlatformParseError};
 
+    #[cfg(feature = "serde")]
     #[rstest]
     #[case(
         Platform::all(),
@@ -145,6 +143,7 @@ mod tests {
         assert_eq!(serde_yaml::to_string(&platform).unwrap(), expected);
     }
 
+    #[cfg(feature = "serde")]
     #[rstest]
     #[case(
         indoc! {"
@@ -175,6 +174,7 @@ mod tests {
         assert_eq!(serde_yaml::from_str::<Platform>(input).unwrap(), expected);
     }
 
+    #[cfg(feature = "serde")]
     #[test]
     fn platform_serialize_ordered() {
         let input = indoc! {"

@@ -1,24 +1,12 @@
-use std::str::FromStr;
+use core::{fmt, str::FromStr};
 
-use derive_more::Display;
-use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-#[derive(
-    Clone,
-    Copy,
-    Debug,
-    Default,
-    Display,
-    Eq,
-    Hash,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    Serialize,
-    Deserialize,
-)]
-#[serde(rename_all = "lowercase")]
+use super::VALID_FILE_EXTENSIONS;
+
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 pub enum Architecture {
     X86,
     X64,
@@ -29,20 +17,8 @@ pub enum Architecture {
 }
 
 #[derive(Error, Debug, Eq, PartialEq)]
-pub enum ArchitectureError {
-    #[error("Failed to parse as valid Architecture")]
-    Invalid,
-}
-
-pub const VALID_FILE_EXTENSIONS: [&str; 7] = [
-    "msix",
-    "msi",
-    "appx",
-    "exe",
-    "zip",
-    "msixbundle",
-    "appxbundle",
-];
+#[error("Failed to parse as valid Architecture")]
+pub struct ParseArchitectureError;
 
 const DELIMITERS: [u8; 8] = [b',', b'/', b'\\', b'.', b'_', b'-', b'(', b')'];
 
@@ -82,9 +58,40 @@ const ARCHITECTURES: [(&str, Architecture); 32] = [
 ];
 
 impl Architecture {
+    /// Returns `true` if the architecture is a 64-bit architecture.
+    ///
+    /// # Examples
+    /// ```
+    /// use winget_types::installer::Architecture;
+    ///
+    /// assert!(Architecture::X64.is_64_bit());
+    /// assert!(Architecture::Arm64.is_64_bit());
+    /// assert!(!Architecture::X86.is_64_bit());
+    /// assert!(!Architecture::Arm.is_64_bit());
+    /// assert!(!Architecture::Neutral.is_64_bit());
+    /// ```
     #[must_use]
+    #[inline]
     pub const fn is_64_bit(self) -> bool {
         matches!(self, Self::X64 | Self::Arm64)
+    }
+
+    /// Returns `true` if the architecture is a 32-bit architecture.
+    ///
+    /// # Examples
+    /// ```
+    /// use winget_types::installer::Architecture;
+    ///
+    /// assert!(Architecture::X86.is_32_bit());
+    /// assert!(Architecture::Arm.is_32_bit());
+    /// assert!(!Architecture::X64.is_32_bit());
+    /// assert!(!Architecture::Arm64.is_32_bit());
+    /// assert!(!Architecture::Neutral.is_32_bit());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_32_bit(self) -> bool {
+        matches!(self, Self::X86 | Self::Arm)
     }
 
     #[must_use]
@@ -127,10 +134,34 @@ impl Architecture {
 
         None
     }
+
+    #[must_use]
+    pub const fn as_str(&self) -> &'static str {
+        match self {
+            Self::X86 => "x86",
+            Self::X64 => "x64",
+            Self::Arm => "arm",
+            Self::Arm64 => "arm64",
+            Self::Neutral => "neutral",
+        }
+    }
+}
+
+impl AsRef<str> for Architecture {
+    #[inline]
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl fmt::Display for Architecture {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.as_str().fmt(f)
+    }
 }
 
 impl FromStr for Architecture {
-    type Err = ArchitectureError;
+    type Err = ParseArchitectureError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
@@ -139,16 +170,18 @@ impl FromStr for Architecture {
             "arm" => Ok(Self::Arm),
             "arm64" => Ok(Self::Arm64),
             "neutral" => Ok(Self::Neutral),
-            _ => Err(Self::Err::Invalid),
+            _ => Err(ParseArchitectureError),
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use alloc::format;
+
     use rstest::rstest;
 
-    use crate::installer::architecture::Architecture;
+    use super::Architecture;
 
     #[rstest]
     fn x64_architectures_at_end(

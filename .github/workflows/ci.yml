@@ -1,25 +1,69 @@
 name: CI
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   test:
-    name: Rust ${{ matrix.toolchain }}
+    name: Rust ${{ matrix.channel }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        toolchain: [stable, beta, nightly]
+        channel: [ stable, beta, nightly ]
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust ${{ matrix.channel }}
+        uses: moonrepo/setup-rust@v1
         with:
-          toolchain: ${{ matrix.toolchain }}
-          components: rust-src
-      - run: cargo check
-      - run: cargo test
-      - run: cargo publish --dry-run
+          bins: cargo-hack
+          channel: ${{ matrix.channel }}
+
+      - name: Test powerset
+        run: cargo hack test --feature-powerset --optional-deps
+
+      - name: Publish dry run
+        run: cargo publish --dry-run
+
+
+  msrv:
+    name: MSRV
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install cargo-msrv
+        uses: moonrepo/setup-rust@v1
+        with:
+          bins: cargo-msrv
+
+      - name: Verify MSRV
+        run: cargo msrv verify
+
+      - name: Find actual MSRV
+        if: steps.verify.outcome == 'failure'
+        run: cargo msrv find
+
+  miri:
+    name: Miri
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Miri
+        uses: moonrepo/setup-rust@v1
+        with:
+          channel: nightly
+          components: miri
+
+      - name: Setup Miri
+        run: cargo +nightly miri setup
+
+      - name: Test with Miri
+        run: cargo +nightly miri test

@@ -1,7 +1,25 @@
-use derive_more::{Display, FromStr};
-use serde::{Deserialize, Serialize};
+use core::{fmt, str::FromStr};
 
-use crate::shared::url::DecodedUrl;
+use url::ParseError;
 
-#[derive(Clone, FromStr, Display, Deserialize, Serialize)]
+use super::DecodedUrl;
+
+#[derive(Clone, Debug, Default, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(transparent))]
 pub struct PackageUrl(DecodedUrl);
+
+impl fmt::Display for PackageUrl {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+impl FromStr for PackageUrl {
+    type Err = ParseError;
+
+    #[inline]
+    fn from_str(src: &str) -> Result<Self, Self::Err> {
+        DecodedUrl::from_str(src).map(PackageUrl)
+    }
+}

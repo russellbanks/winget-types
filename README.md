@@ -1,6 +1,9 @@
 # WinGet Types
 
 [![CI Status](https://github.com/russellbanks/winget-types/workflows/CI/badge.svg)](https://github.com/russellbanks/winget-types/actions)
+[![Latest version](https://img.shields.io/crates/v/winget-types.svg)](https://crates.io/crates/winget-types)
+[![Documentation](https://docs.rs/winget-types/badge.svg)](https://docs.rs/winget-types)
+![License](https://img.shields.io/crates/l/winget-types.svg)
 
 ## Usage
 
@@ -8,7 +11,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-winget-types = "0.1"
+winget-types = "0.2"
 ```
 
 ## License

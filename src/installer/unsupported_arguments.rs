@@ -1,14 +1,6 @@
-use std::{
-    fmt,
-    fmt::{Display, Formatter},
-};
+use core::fmt;
 
 use bitflags::bitflags;
-use serde::{
-    Deserialize, Deserializer, Serialize, Serializer, de,
-    de::{SeqAccess, Visitor},
-    ser::SerializeSeq,
-};
 
 bitflags! {
     /// A list of unsupported arguments internally represented as bit flags
@@ -22,8 +14,8 @@ bitflags! {
 const LOG: &str = "Log";
 const LOCATION: &str = "Location";
 
-impl Display for UnsupportedArguments {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+impl fmt::Display for UnsupportedArguments {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             Self::LOG => f.write_str(LOG),
             Self::LOCATION => f.write_str(LOCATION),
@@ -32,11 +24,14 @@ impl Display for UnsupportedArguments {
     }
 }
 
-impl Serialize for UnsupportedArguments {
+#[cfg(feature = "serde")]
+impl serde::Serialize for UnsupportedArguments {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer,
+        S: serde::Serializer,
     {
+        use serde::ser::SerializeSeq;
+
         let mut seq = serializer.serialize_seq(Some(self.iter().count()))?;
         for unsupported_argument in self.iter() {
             match unsupported_argument {
@@ -49,23 +44,24 @@ impl Serialize for UnsupportedArguments {
     }
 }
 
-impl<'de> Deserialize<'de> for UnsupportedArguments {
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for UnsupportedArguments {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: Deserializer<'de>,
+        D: serde::Deserializer<'de>,
     {
         struct UnsupportedArgumentsVisitor;
 
-        impl<'de> Visitor<'de> for UnsupportedArgumentsVisitor {
+        impl<'de> serde::de::Visitor<'de> for UnsupportedArgumentsVisitor {
             type Value = UnsupportedArguments;
 
-            fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("a sequence of unsupported arguments")
             }
 
             fn visit_seq<V>(self, mut seq: V) -> Result<Self::Value, V::Error>
             where
-                V: SeqAccess<'de>,
+                V: serde::de::SeqAccess<'de>,
             {
                 let mut unsupported_arguments = UnsupportedArguments::empty();
 
@@ -74,7 +70,7 @@ impl<'de> Deserialize<'de> for UnsupportedArguments {
                         LOG => unsupported_arguments |= UnsupportedArguments::LOG,
                         LOCATION => unsupported_arguments |= UnsupportedArguments::LOCATION,
                         _ => {
-                            return Err(de::Error::unknown_variant(value, &[LOG, LOCATION]));
+                            return Err(serde::de::Error::unknown_variant(value, &[LOG, LOCATION]));
                         }
                     }
                 }
@@ -87,12 +83,12 @@ impl<'de> Deserialize<'de> for UnsupportedArguments {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "serde"))]
 mod tests {
     use indoc::indoc;
     use rstest::rstest;
 
-    use crate::installer::UnsupportedArguments;
+    use super::UnsupportedArguments;
 
     #[rstest]
     #[case(

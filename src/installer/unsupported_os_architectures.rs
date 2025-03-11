@@ -1,17 +1,9 @@
-use std::{
-    fmt,
-    fmt::{Display, Formatter},
-};
+use core::fmt;
 
 use bitflags::bitflags;
-use serde::{
-    Deserialize, Deserializer, Serialize, Serializer, de,
-    de::{SeqAccess, Visitor},
-    ser::SerializeSeq,
-};
 
 bitflags! {
-    /// A list of unsupported arguments internally represented as bit flags
+    /// A list of unsupported OS architectures internally represented as bit flags.
     #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
     pub struct UnsupportedOSArchitecture: u8 {
         const X86 = 1;
@@ -26,8 +18,8 @@ const X64: &str = "x64";
 const ARM: &str = "arm";
 const ARM64: &str = "arm64";
 
-impl Display for UnsupportedOSArchitecture {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+impl fmt::Display for UnsupportedOSArchitecture {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             Self::X86 => f.write_str(X86),
             Self::X64 => f.write_str(X64),
@@ -38,11 +30,14 @@ impl Display for UnsupportedOSArchitecture {
     }
 }
 
-impl Serialize for UnsupportedOSArchitecture {
+#[cfg(feature = "serde")]
+impl serde::Serialize for UnsupportedOSArchitecture {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer,
+        S: serde::Serializer,
     {
+        use serde::ser::SerializeSeq;
+
         let mut seq = serializer.serialize_seq(Some(self.iter().count()))?;
         for architecture in self.iter() {
             match architecture {
@@ -57,23 +52,24 @@ impl Serialize for UnsupportedOSArchitecture {
     }
 }
 
-impl<'de> Deserialize<'de> for UnsupportedOSArchitecture {
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for UnsupportedOSArchitecture {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: Deserializer<'de>,
+        D: serde::Deserializer<'de>,
     {
         struct UnsupportedOSArchitectureVisitor;
 
-        impl<'de> Visitor<'de> for UnsupportedOSArchitectureVisitor {
+        impl<'de> serde::de::Visitor<'de> for UnsupportedOSArchitectureVisitor {
             type Value = UnsupportedOSArchitecture;
 
-            fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("a sequence of unsupported OS architectures")
             }
 
             fn visit_seq<V>(self, mut seq: V) -> Result<Self::Value, V::Error>
             where
-                V: SeqAccess<'de>,
+                V: serde::de::SeqAccess<'de>,
             {
                 let mut unsupported_os_architectures = UnsupportedOSArchitecture::empty();
 
@@ -84,7 +80,10 @@ impl<'de> Deserialize<'de> for UnsupportedOSArchitecture {
                         ARM => unsupported_os_architectures |= UnsupportedOSArchitecture::ARM,
                         ARM64 => unsupported_os_architectures |= UnsupportedOSArchitecture::ARM64,
                         _ => {
-                            return Err(de::Error::unknown_variant(value, &[X86, X64, ARM, ARM64]));
+                            return Err(serde::de::Error::unknown_variant(
+                                value,
+                                &[X86, X64, ARM, ARM64],
+                            ));
                         }
                     }
                 }
@@ -97,12 +96,12 @@ impl<'de> Deserialize<'de> for UnsupportedOSArchitecture {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "serde"))]
 mod tests {
     use indoc::indoc;
     use rstest::rstest;
 
-    use crate::installer::UnsupportedOSArchitecture;
+    use super::UnsupportedOSArchitecture;
 
     #[rstest]
     #[case(

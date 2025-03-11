@@ -1,35 +1,13 @@
-use std::{
-    fmt::{Display, Formatter},
-    str::FromStr,
-};
+use core::{fmt, str::FromStr};
 
 use compact_str::CompactString;
-use derive_more::IntoIterator;
-use serde_with::{DeserializeFromStr, SerializeDisplay};
 use smallvec::SmallVec;
 use thiserror::Error;
 
-#[derive(
-    Clone,
-    Debug,
-    Eq,
-    PartialEq,
-    Ord,
-    PartialOrd,
-    Hash,
-    IntoIterator,
-    SerializeDisplay,
-    DeserializeFromStr,
-)]
-pub struct InstallerSwitch<const N: usize>(
-    #[into_iterator(owned, ref, ref_mut)] SmallVec<[CompactString; 2]>,
-);
+#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+pub struct InstallerSwitch<const N: usize>(SmallVec<[CompactString; 2]>);
 
-impl<const N: usize> InstallerSwitch<N> {
-    pub const MAX_LENGTH: usize = N;
-}
-
-#[derive(Debug, Error, PartialEq, Eq)]
+#[derive(Debug, Error, Eq, PartialEq)]
 pub enum SwitchError<const N: usize> {
     #[error("Switch cannot be empty")]
     Empty,
@@ -38,6 +16,8 @@ pub enum SwitchError<const N: usize> {
 }
 
 impl<const N: usize> InstallerSwitch<N> {
+    pub const MAX_CHAR_LENGTH: usize = N;
+
     const DELIMITERS: [char; 2] = [',', ' '];
 
     pub fn push<S: Into<CompactString>>(&mut self, other: S) {
@@ -49,10 +29,20 @@ impl<const N: usize> InstallerSwitch<N> {
             .iter()
             .any(|this| this.eq_ignore_ascii_case(other.as_ref()))
     }
+
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
+    #[inline]
+    pub fn iter(&self) -> core::slice::Iter<CompactString> {
+        self.0.iter()
+    }
 }
 
-impl<const N: usize> Display for InstallerSwitch<N> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+impl<const N: usize> fmt::Display for InstallerSwitch<N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for part in itertools::intersperse(self.0.iter().map(CompactString::as_str), " ") {
             f.write_str(part)?;
         }
@@ -79,8 +69,84 @@ impl<const N: usize> FromStr for InstallerSwitch<N> {
     }
 }
 
+impl<const N: usize> IntoIterator for InstallerSwitch<N> {
+    type Item = CompactString;
+
+    type IntoIter = smallvec::IntoIter<[CompactString; 2]>;
+
+    #[inline]
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+impl<'switch, const N: usize> IntoIterator for &'switch InstallerSwitch<N> {
+    type Item = &'switch CompactString;
+
+    type IntoIter = core::slice::Iter<'switch, CompactString>;
+
+    #[inline]
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.iter()
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<const N: usize> serde::Serialize for InstallerSwitch<N>
+where
+    Self: fmt::Display,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.collect_str(&self)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de, const N: usize> serde::Deserialize<'de> for InstallerSwitch<N> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        struct Helper<S>(core::marker::PhantomData<S>);
+
+        impl<S> serde::de::Visitor<'_> for Helper<S>
+        where
+            S: FromStr,
+            <S as FromStr>::Err: fmt::Display,
+        {
+            type Value = S;
+
+            fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                f.write_str("a string")
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                value.parse::<Self::Value>().map_err(E::custom)
+            }
+
+            fn visit_bytes<E>(self, value: &[u8]) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                let utf8 = core::str::from_utf8(value).map_err(E::custom)?;
+                self.visit_str(utf8)
+            }
+        }
+
+        deserializer.deserialize_str(Helper(core::marker::PhantomData))
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use alloc::{borrow::ToOwned, format, string::ToString};
+
     use smallvec::{SmallVec, smallvec};
 
     use crate::installer::switches::{log::LogSwitch, switch::SwitchError};
@@ -92,18 +158,18 @@ mod tests {
 
     #[test]
     fn unicode_custom_switch_max_length() {
-        let custom_switch = "🦀".repeat(LogSwitch::MAX_LENGTH);
+        let custom_switch = "🦀".repeat(LogSwitch::MAX_CHAR_LENGTH);
 
         // Ensure that it's character length that's being checked and not byte or UTF-16 length
-        assert!(custom_switch.len() > LogSwitch::MAX_LENGTH);
-        assert!(custom_switch.encode_utf16().count() > LogSwitch::MAX_LENGTH);
-        assert_eq!(custom_switch.chars().count(), LogSwitch::MAX_LENGTH);
+        assert!(custom_switch.len() > LogSwitch::MAX_CHAR_LENGTH);
+        assert!(custom_switch.encode_utf16().count() > LogSwitch::MAX_CHAR_LENGTH);
+        assert_eq!(custom_switch.chars().count(), LogSwitch::MAX_CHAR_LENGTH);
         assert!(custom_switch.parse::<LogSwitch>().is_ok());
     }
 
     #[test]
     fn custom_switch_too_long() {
-        let custom_switch = "a".repeat(LogSwitch::MAX_LENGTH + 1);
+        let custom_switch = "a".repeat(LogSwitch::MAX_CHAR_LENGTH + 1);
 
         assert_eq!(
             custom_switch.parse::<LogSwitch>().err(),

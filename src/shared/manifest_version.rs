@@ -1,23 +1,10 @@
-use std::{num::ParseIntError, str::FromStr};
+use core::{fmt, num::ParseIntError, str::FromStr};
 
-use const_format::{ConstDebug, Error, Formatter, writec};
-use derive_more::Display;
-use serde_with::{DeserializeFromStr, SerializeDisplay};
 use thiserror::Error;
 
-#[derive(
-    ConstDebug,
-    Debug,
-    Display,
-    Eq,
-    PartialEq,
-    Ord,
-    PartialOrd,
-    Hash,
-    SerializeDisplay,
-    DeserializeFromStr,
-)]
-#[display("{_0}.{_1}.{_2}")]
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
 pub struct ManifestVersion(u16, u16, u16);
 
 #[derive(Error, Debug, Eq, PartialEq)]
@@ -33,14 +20,36 @@ pub enum ManifestVersionError {
 }
 
 impl ManifestVersion {
-    pub const DEFAULT: Self = Self(1, 9, 0);
+    pub const DEFAULT: Self = Self(1, 10, 0);
     const PARTS_COUNT: u8 = 3;
     const SEPARATOR: char = '.';
 
-    pub fn new<S: AsRef<str>>(input: S) -> Result<Self, ManifestVersionError> {
-        let mut parts = input
-            .as_ref()
-            .splitn(Self::PARTS_COUNT as usize, Self::SEPARATOR);
+    /// Creates a new `ManifestVersion` from a `major`, `minor`, and `patch` part.
+    #[must_use]
+    #[inline]
+    pub const fn new(major: u16, minor: u16, patch: u16) -> Self {
+        Self(major, minor, patch)
+    }
+}
+
+impl Default for ManifestVersion {
+    fn default() -> Self {
+        Self::DEFAULT
+    }
+}
+
+impl fmt::Display for ManifestVersion {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}.{}.{}", self.0, self.1, self.2)
+    }
+}
+
+impl FromStr for ManifestVersion {
+    type Err = ManifestVersionError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut parts = s.splitn(Self::PARTS_COUNT as usize, Self::SEPARATOR);
+
         let major = parts
             .next()
             .ok_or(ManifestVersionError::NoMajorVersion)?
@@ -53,24 +62,29 @@ impl ManifestVersion {
             .next()
             .ok_or(ManifestVersionError::NoPatchVersion)?
             .parse::<u16>()?;
+
         Ok(Self(major, minor, patch))
     }
+}
 
-    pub const fn const_display_fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
-        writec!(f, "{}.{}.{}", self.0, self.1, self.2)
+impl TryFrom<&str> for ManifestVersion {
+    type Error = ManifestVersionError;
+
+    #[inline]
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        value.parse()
     }
 }
 
-impl Default for ManifestVersion {
-    fn default() -> Self {
-        Self::DEFAULT
-    }
-}
-
-impl FromStr for ManifestVersion {
-    type Err = ManifestVersionError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Self::new(s)
+#[cfg(feature = "serde")]
+impl serde::Serialize for ManifestVersion
+where
+    Self: fmt::Display,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.collect_str(&self)
     }
 }

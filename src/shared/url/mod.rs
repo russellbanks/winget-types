@@ -5,33 +5,23 @@ mod publisher_support_url;
 mod publisher_url;
 mod release_notes_url;
 
-use std::str::FromStr;
+use core::{
+    fmt,
+    ops::{Deref, DerefMut},
+    str::FromStr,
+};
 
 pub use copyright_url::CopyrightUrl;
-use derive_more::{Deref, DerefMut, Display};
 pub use license_url::LicenseUrl;
 pub use package_url::PackageUrl;
 use percent_encoding::percent_decode_str;
 pub use publisher_support_url::PublisherSupportUrl;
 pub use publisher_url::PublisherUrl;
 pub use release_notes_url::ReleaseNotesUrl;
-use serde::{Deserialize, Serialize};
 use url::{ParseError, Url};
 
-#[derive(
-    Clone,
-    Debug,
-    Display,
-    Deref,
-    DerefMut,
-    Hash,
-    Eq,
-    PartialEq,
-    PartialOrd,
-    Ord,
-    Serialize,
-    Deserialize,
-)]
+#[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct DecodedUrl(Url);
 
 impl FromStr for DecodedUrl {
@@ -44,6 +34,28 @@ impl FromStr for DecodedUrl {
 
 impl Default for DecodedUrl {
     fn default() -> Self {
-        Self(Url::parse("https://example.com").unwrap())
+        Self(Url::parse("https://example.com").unwrap_or_else(|_| unreachable!()))
+    }
+}
+
+impl Deref for DecodedUrl {
+    type Target = Url;
+
+    #[inline]
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for DecodedUrl {
+    #[inline]
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
+impl fmt::Display for DecodedUrl {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
     }
 }

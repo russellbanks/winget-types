@@ -1,17 +1,9 @@
-use std::{
-    fmt,
-    fmt::{Display, Formatter},
-};
+use core::fmt;
 
 use bitflags::bitflags;
-use serde::{
-    Deserialize, Deserializer, Serialize, Serializer, de,
-    de::{SeqAccess, Visitor},
-    ser::SerializeSeq,
-};
 
 bitflags! {
-    /// A list of supported installer modes internally represented as bit flags
+    /// A list of supported installer modes internally represented as bit flags.
     #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
     pub struct InstallModes: u8 {
         const INTERACTIVE = 1;
@@ -20,12 +12,15 @@ bitflags! {
     }
 }
 
+#[cfg(feature = "serde")]
 const INTERACTIVE: &str = "interactive";
+#[cfg(feature = "serde")]
 const SILENT: &str = "silent";
+#[cfg(feature = "serde")]
 const SILENT_WITH_PROGRESS: &str = "silentWithProgress";
 
-impl Display for InstallModes {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+impl fmt::Display for InstallModes {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             Self::INTERACTIVE => f.write_str("Interactive"),
             Self::SILENT => f.write_str("Silent"),
@@ -35,11 +30,14 @@ impl Display for InstallModes {
     }
 }
 
-impl Serialize for InstallModes {
+#[cfg(feature = "serde")]
+impl serde::Serialize for InstallModes {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: Serializer,
+        S: serde::Serializer,
     {
+        use serde::ser::SerializeSeq;
+
         let mut seq = serializer.serialize_seq(Some(self.iter().count()))?;
         for mode in self.iter() {
             match mode {
@@ -53,23 +51,24 @@ impl Serialize for InstallModes {
     }
 }
 
-impl<'de> Deserialize<'de> for InstallModes {
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for InstallModes {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: Deserializer<'de>,
+        D: serde::Deserializer<'de>,
     {
         struct InstallModesVisitor;
 
-        impl<'de> Visitor<'de> for InstallModesVisitor {
+        impl<'de> serde::de::Visitor<'de> for InstallModesVisitor {
             type Value = InstallModes;
 
-            fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
                 formatter.write_str("a sequence of install mode strings")
             }
 
             fn visit_seq<V>(self, mut seq: V) -> Result<Self::Value, V::Error>
             where
-                V: SeqAccess<'de>,
+                V: serde::de::SeqAccess<'de>,
             {
                 let mut modes = InstallModes::empty();
 
@@ -79,7 +78,7 @@ impl<'de> Deserialize<'de> for InstallModes {
                         SILENT => modes |= InstallModes::SILENT,
                         SILENT_WITH_PROGRESS => modes |= InstallModes::SILENT_WITH_PROGRESS,
                         _ => {
-                            return Err(de::Error::unknown_variant(
+                            return Err(serde::de::Error::unknown_variant(
                                 value,
                                 &[INTERACTIVE, SILENT, SILENT_WITH_PROGRESS],
                             ));
@@ -97,10 +96,13 @@ impl<'de> Deserialize<'de> for InstallModes {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(feature = "serde")]
     use indoc::indoc;
+    #[cfg(feature = "serde")]
     use rstest::rstest;
 
-    use crate::installer::install_modes::InstallModes;
+    #[cfg(feature = "serde")]
+    use super::InstallModes;
 
     #[rstest]
     #[case(
@@ -130,6 +132,7 @@ mod tests {
             - interactive
         "}
     )]
+    #[cfg(feature = "serde")]
     fn serialize_install_modes(#[case] modes: InstallModes, #[case] expected: &str) {
         assert_eq!(serde_yaml::to_string(&modes).unwrap(), expected);
     }
@@ -162,6 +165,7 @@ mod tests {
         "},
         InstallModes::INTERACTIVE,
     )]
+    #[cfg(feature = "serde")]
     fn deserialize_install_modes(#[case] input: &str, #[case] expected: InstallModes) {
         assert_eq!(
             serde_yaml::from_str::<InstallModes>(input).unwrap(),
@@ -170,6 +174,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
     fn install_modes_serialize_ordered() {
         let input = indoc! {"
             - silentWithProgress

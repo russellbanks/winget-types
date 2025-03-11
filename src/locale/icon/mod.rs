@@ -2,8 +2,6 @@ pub mod file_type;
 pub mod resolution;
 pub mod theme;
 
-use serde::{Deserialize, Serialize};
-use serde_with::skip_serializing_none;
 use url::Url;
 
 use crate::{
@@ -11,18 +9,32 @@ use crate::{
     shared::Sha256String,
 };
 
-#[skip_serializing_none]
-#[derive(Serialize, Deserialize, Ord, PartialOrd, Eq, PartialEq)]
-#[serde(rename_all = "PascalCase")]
+#[derive(Ord, PartialOrd, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "PascalCase"))]
 pub struct Icon {
-    #[serde(rename = "IconUrl")]
+    /// The url of the hosted icon file
+    #[cfg_attr(feature = "serde", serde(rename = "IconUrl"))]
     pub url: Url,
-    #[serde(rename = "IconFileType")]
-    pub file_type: Option<IconFileType>,
-    #[serde(rename = "IconResolution")]
+    /// The icon file type
+    #[cfg_attr(feature = "serde", serde(rename = "IconFileType"))]
+    pub file_type: IconFileType,
+    /// Optional icon resolution
+    #[cfg_attr(
+        feature = "serde",
+        serde(rename = "IconResolution", skip_serializing_if = "Option::is_none")
+    )]
     pub resolution: Option<IconResolution>,
-    #[serde(rename = "IconTheme")]
+    /// Optional icon theme
+    #[cfg_attr(
+        feature = "serde",
+        serde(rename = "IconTheme", skip_serializing_if = "Option::is_none")
+    )]
     pub theme: Option<IconTheme>,
-    #[serde(rename = "IconSha256")]
+    /// Optional Sha256 of the icon file
+    #[cfg_attr(
+        feature = "serde",
+        serde(rename = "IconSha256", skip_serializing_if = "Option::is_none")
+    )]
     pub sha_256: Option<Sha256String>,
 }
