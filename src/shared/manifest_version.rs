@@ -1,10 +1,11 @@
 use core::{fmt, num::ParseIntError, str::FromStr};
 
+use compact_str::CompactString;
 use thiserror::Error;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
+#[cfg_attr(feature = "serde", serde(try_from = "CompactString"))]
 pub struct ManifestVersion(u16, u16, u16);
 
 #[derive(Error, Debug, Eq, PartialEq)]
@@ -67,11 +68,11 @@ impl FromStr for ManifestVersion {
     }
 }
 
-impl TryFrom<&str> for ManifestVersion {
+impl TryFrom<CompactString> for ManifestVersion {
     type Error = ManifestVersionError;
 
     #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: CompactString) -> Result<Self, Self::Error> {
         value.parse()
     }
 }

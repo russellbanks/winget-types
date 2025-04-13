@@ -5,7 +5,7 @@ use thiserror::Error;
 
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
+#[cfg_attr(feature = "serde", serde(try_from = "CompactString"))]
 #[repr(transparent)]
 pub struct Copyright(CompactString);
 
@@ -98,11 +98,11 @@ impl FromStr for Copyright {
     }
 }
 
-impl TryFrom<&str> for Copyright {
+impl TryFrom<CompactString> for Copyright {
     type Error = CopyrightError;
 
     #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: CompactString) -> Result<Self, Self::Error> {
         Self::new(value)
     }
 }

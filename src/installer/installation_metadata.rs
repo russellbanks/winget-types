@@ -1,9 +1,8 @@
 use alloc::{collections::BTreeSet, string::String};
 use core::fmt;
 
-use camino::Utf8PathBuf;
-
 use super::Sha256String;
+use crate::Path;
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -11,7 +10,7 @@ use super::Sha256String;
 pub struct InstallationMetadata {
     /// The default install location for the package.
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
-    pub default_install_location: Option<Utf8PathBuf>,
+    pub default_install_location: Option<Path>,
 
     /// The files installed for the package.
     #[cfg_attr(
@@ -34,7 +33,7 @@ impl InstallationMetadata {
 #[cfg_attr(feature = "serde", serde(rename_all = "PascalCase"))]
 pub struct MetadataFiles {
     /// The path to the installed file relative to the default install location.
-    pub relative_file_path: Utf8PathBuf,
+    pub relative_file_path: Path,
 
     /// The Sha256 hash of the installed file.
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]

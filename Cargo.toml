@@ -1,6 +1,6 @@
 [package]
 name = "winget-types"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 rust-version = "1.85"
 description = "WinGet Types"
@@ -12,32 +12,54 @@ categories = ["api-bindings", "no-std"]
 [dependencies]
 base16ct = { version = "0.2", default-features = false }
 bitflags = { version = "2", default-features = false }
-camino = { version = "1", default-features = false }
-chrono = { version = "0.4", default-features = false }
+camino = { version = "1", default-features = false, optional = true }
+chrono = { version = "0.4", default-features = false, optional = true }
 compact_str = { version = "0.9", default-features = false }
 heapless = { version = "0.8", default-features = false }
 icu_locid = { version = "1", default-features = false }
 itertools = { version = "0.14", default-features = false }
+jiff = { version = "0.2", default-features = false, optional = true }
 package-family-name = { version = "2", default-features = false }
 percent-encoding = { version = "2", default-features = false }
-serde = { version = "1", features = ["derive"], optional = true }
+serde = { version = "1", default-features = false, features = ["alloc", "derive"], optional = true }
 sha2 = { version = "0.10", default-features = false }
 smallvec = { version = "1", default-features = false, features = ["union"] }
 thiserror = { version = "2", default-features = false }
-url = { version = "2", default-features = false }
+time = { version = "0.3", default-features = false, optional = true }
+url = { version = "2.5.4", default-features = false } # std feature was added in 2.5.3
 
 [features]
-std = ["icu_locid/std"]
+chrono = ["dep:chrono"]
+jiff = ["dep:jiff"]
 serde = [
     "dep:serde",
-    "camino/serde1",
-    "chrono/serde",
+    "camino?/serde1",
+    "chrono?/serde",
     "compact_str/serde",
     "heapless/serde",
     "icu_locid/serde",
+    "jiff?/serde",
     "package-family-name/serde",
+    "time?/serde-human-readable",
     "url/serde"
 ]
+std = [
+    "dep:camino",
+    "base16ct/std",
+    "bitflags/std",
+    "chrono?/std",
+    "compact_str/std",
+    "icu_locid/std",
+    "itertools/use_std",
+    "jiff?/std",
+    "percent-encoding/std",
+    "serde?/std",
+    "sha2/std",
+    "thiserror/std",
+    "time?/std",
+    "url/std"
+]
+time = ["dep:time"]
 
 [dev-dependencies]
 indoc = "2"

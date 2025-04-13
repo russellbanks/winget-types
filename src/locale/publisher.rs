@@ -5,7 +5,7 @@ use thiserror::Error;
 
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
+#[cfg_attr(feature = "serde", serde(try_from = "CompactString"))]
 #[repr(transparent)]
 pub struct Publisher(CompactString);
 
@@ -106,11 +106,11 @@ impl FromStr for Publisher {
     }
 }
 
-impl TryFrom<&str> for Publisher {
+impl TryFrom<CompactString> for Publisher {
     type Error = PublisherError;
 
     #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: CompactString) -> Result<Self, Self::Error> {
         Self::new(value)
     }
 }

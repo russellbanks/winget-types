@@ -1,5 +1,6 @@
 use core::{borrow::Borrow, fmt, str::FromStr};
 
+use compact_str::CompactString;
 use heapless::String;
 pub use markets::{Markets, MarketsError};
 use thiserror::Error;
@@ -8,7 +9,7 @@ mod markets;
 
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
+#[cfg_attr(feature = "serde", serde(try_from = "CompactString"))]
 #[repr(transparent)]
 pub struct Market(String<2>);
 
@@ -109,11 +110,11 @@ impl FromStr for Market {
     }
 }
 
-impl TryFrom<&str> for Market {
+impl TryFrom<CompactString> for Market {
     type Error = MarketError;
 
     #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: CompactString) -> Result<Self, Self::Error> {
         Self::new(value)
     }
 }

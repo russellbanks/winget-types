@@ -5,7 +5,7 @@ use thiserror::Error;
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
+#[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[repr(transparent)]
 pub struct ReleaseNotes(String);
 
@@ -75,11 +75,11 @@ impl FromStr for ReleaseNotes {
     }
 }
 
-impl TryFrom<&str> for ReleaseNotes {
+impl TryFrom<String> for ReleaseNotes {
     type Error = ReleaseNotesError;
 
     #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: String) -> Result<Self, Self::Error> {
         Self::new(value)
     }
 }

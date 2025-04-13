@@ -43,6 +43,7 @@ impl fmt::Display for ManifestType {
     }
 }
 
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum ManifestTypeWithLocale {
     Installer,
     Locale(LanguageIdentifier),

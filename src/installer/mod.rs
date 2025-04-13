@@ -34,7 +34,6 @@ pub use architecture::{Architecture, ParseArchitectureError};
 pub use authentication::Authentication;
 pub use capability::{Capability, CapabilityError, RestrictedCapability};
 pub use channel::{Channel, ChannelError};
-use chrono::NaiveDate;
 pub use command::{Command, CommandError};
 pub use dependencies::{Dependencies, PackageDependencies};
 pub use elevation_requirement::ElevationRequirement;
@@ -75,6 +74,18 @@ pub const VALID_FILE_EXTENSIONS: [&str; 7] = [
     "msixbundle",
     "appxbundle",
 ];
+
+#[cfg(feature = "chrono")]
+type Date = chrono::NaiveDate;
+
+#[cfg(all(feature = "time", not(feature = "chrono")))]
+type Date = time::Date;
+
+#[cfg(all(feature = "jiff", not(any(feature = "chrono", feature = "time"))))]
+type Date = jiff::civil::Date;
+
+#[cfg(not(any(feature = "chrono", feature = "time", feature = "jiff")))]
+type Date = compact_str::CompactString;
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -323,7 +334,7 @@ pub struct InstallerManifest {
 
     /// The release date for a package, in RFC 3339 / ISO 8601 format, i.e. "YYYY-MM-DD".
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
-    pub release_date: Option<NaiveDate>,
+    pub release_date: Option<Date>,
 
     /// The requirement to have an install location specified.
     ///
@@ -465,24 +476,21 @@ impl InstallerManifest {
     pub fn optimize(&mut self) {
         macro_rules! optimize_keys {
             ($($($field:ident).+),* $(,)?) => {
-                #[inline]
-                fn default<T: Default>(_: &T) -> T {
-                    T::default()
-                }
-
                 $(
-                    if let Ok(field) = self
+                    if let Ok(nested) = self
                         .installers
                         .iter_mut()
                         .map(|installer| &mut installer.$($field).+)
                         .all_equal_value()
                     {
-                        self.$($field).+ = core::mem::take(r#field);
-                        for installer in &mut self.installers {
-                            installer.$($field).+ = default(&installer.$($field).+);
+                        if <_ as PartialEq>::ne(nested, &Default::default()) {
+                            self.$($field).+ = core::mem::take(nested);
+                            for installer in &mut self.installers {
+                                installer.$($field).+ = Default::default();
+                            }
                         }
                     } else {
-                        self.$($field).+ = default(&self.$($field).+);
+                        self.$($field).+ = Default::default();
                     }
                 )*
             };
@@ -779,7 +787,7 @@ pub struct Installer {
 
     /// The release date for a package, in RFC 3339 / ISO 8601 format, i.e. "YYYY-MM-DD".
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
-    pub release_date: Option<NaiveDate>,
+    pub release_date: Option<Date>,
 
     /// The requirement to have an install location specified.
     ///

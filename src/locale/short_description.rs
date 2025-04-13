@@ -5,7 +5,7 @@ use thiserror::Error;
 
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
+#[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[repr(transparent)]
 pub struct ShortDescription(String);
 
@@ -94,11 +94,11 @@ impl FromStr for ShortDescription {
     }
 }
 
-impl TryFrom<&str> for ShortDescription {
+impl TryFrom<String> for ShortDescription {
     type Error = ShortDescriptionError;
 
     #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: String) -> Result<Self, Self::Error> {
         Self::new(value)
     }
 }

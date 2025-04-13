@@ -10,7 +10,7 @@ use thiserror::Error;
 /// [`SPDX`]: https://spdx.org/licenses/
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
+#[cfg_attr(feature = "serde", serde(try_from = "CompactString"))]
 #[repr(transparent)]
 pub struct License(CompactString);
 
@@ -160,11 +160,11 @@ impl FromStr for License {
     }
 }
 
-impl TryFrom<&str> for License {
+impl TryFrom<CompactString> for License {
     type Error = LicenseError;
 
     #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: CompactString) -> Result<Self, Self::Error> {
         Self::new(value)
     }
 }

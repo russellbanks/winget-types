@@ -7,7 +7,7 @@ use super::DISALLOWED_CHARACTERS;
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
+#[cfg_attr(feature = "serde", serde(try_from = "CompactString"))]
 #[repr(transparent)]
 pub struct PackageIdentifier(CompactString);
 
@@ -142,11 +142,11 @@ impl FromStr for PackageIdentifier {
     }
 }
 
-impl TryFrom<&str> for PackageIdentifier {
+impl TryFrom<CompactString> for PackageIdentifier {
     type Error = PackageIdentifierError;
 
     #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: CompactString) -> Result<Self, Self::Error> {
         Self::new(value)
     }
 }

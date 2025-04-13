@@ -30,7 +30,6 @@ jobs:
       - name: Publish dry run
         run: cargo publish --dry-run
 
-
   msrv:
     name: MSRV
     runs-on: ubuntu-latest

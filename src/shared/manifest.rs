@@ -1,4 +1,4 @@
-use crate::shared::ManifestType;
+use crate::ManifestType;
 
 pub trait Manifest {
     const SCHEMA: &'static str;

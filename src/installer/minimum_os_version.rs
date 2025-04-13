@@ -1,10 +1,11 @@
 use core::{fmt, num::ParseIntError, str::FromStr};
 
+use compact_str::CompactString;
 use thiserror::Error;
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "&str"))]
+#[cfg_attr(feature = "serde", serde(try_from = "CompactString"))]
 pub struct MinimumOSVersion(u16, u16, u16, u16);
 
 #[derive(Error, Debug, Eq, PartialEq)]
@@ -51,11 +52,11 @@ impl FromStr for MinimumOSVersion {
     }
 }
 
-impl TryFrom<&str> for MinimumOSVersion {
+impl TryFrom<CompactString> for MinimumOSVersion {
     type Error = MinimumOSVersionError;
 
     #[inline]
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
+    fn try_from(value: CompactString) -> Result<Self, Self::Error> {
         value.parse()
     }
 }
