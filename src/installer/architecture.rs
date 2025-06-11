@@ -96,26 +96,43 @@ impl Architecture {
 
     #[must_use]
     pub fn from_url(url: &str) -> Option<Self> {
+        fn is_delimited_at(url_bytes: &[u8], start: usize, len: usize) -> bool {
+            url_bytes
+                .get(start - 1)
+                .is_some_and(|delimiter| DELIMITERS.contains(delimiter))
+                && url_bytes
+                    .get(start + len)
+                    .is_some_and(|delimiter| DELIMITERS.contains(delimiter))
+        }
+
         // Ignore the casing of the URL
         let url = url.to_ascii_lowercase();
 
         let url_bytes = url.as_bytes();
 
         // Check for {delimiter}{architecture}{delimiter}
-        for (arch_name, arch) in ARCHITECTURES {
-            if let Some(arch_index) = url.rfind(arch_name) {
-                // Get characters before and after the architecture
-                if let (Some(char_before_arch), Some(char_after_arch)) = (
-                    url_bytes.get(arch_index - 1),
-                    url_bytes.get(arch_index + arch_name.len()),
-                ) {
-                    // If the architecture is surrounded by valid delimiters, return the architecture
-                    if DELIMITERS.contains(char_before_arch) && DELIMITERS.contains(char_after_arch)
-                    {
-                        return Some(arch);
-                    }
-                }
-            }
+        if let Some(arch) = ARCHITECTURES
+            .into_iter()
+            // For each architecture name/type pair, try to find delimited matches in the URL
+            .filter_map(|(name, arch)| {
+                // Find all occurrences of this architecture name in the URL (from right to left)
+                url.rmatch_indices(name)
+                    // Find the first (rightmost) occurrence that is properly delimited
+                    .find(|&(index, _)| is_delimited_at(url_bytes, index, name.len()))
+                    // If found, return a tuple of (name, arch_type, index) for comparison
+                    .map(|(index, _)| (name, arch, index))
+            })
+            // Select the best match based on position and specificity
+            .max_by_key(|(name, _, index)| {
+                (
+                    *index,     // Primary: prefer matches found later in the URL
+                    name.len(), // Secondary: prefer longer names (e.g., x86_64 over x86)
+                )
+            })
+            // Extract just the architecture type from the winning match
+            .map(|(_, arch, _)| arch)
+        {
+            return Some(arch);
         }
 
         // If the architecture has not been found, check for {architecture}.{extension}
@@ -292,6 +309,16 @@ mod tests {
         assert_eq!(
             Architecture::from_url("https://www.example.com/file.exe"),
             None
+        );
+    }
+
+    #[test]
+    fn win32_and_arm64_in_url() {
+        assert_eq!(
+            Architecture::from_url(
+                "https://github.com/vim/vim-win32-installer/releases/download/v9.1.1234/gvim_9.1.1234_arm64.exe"
+            ),
+            Some(Architecture::Arm64)
         );
     }
 }
