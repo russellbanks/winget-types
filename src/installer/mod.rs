@@ -929,15 +929,18 @@ impl Installer {
                 )*
 
                 $(
-                    if let (Some(switch), Some(other_switch)) = (
-                        self.switches.$switch.as_mut(),
-                        other.switches.$switch.as_ref(),
-                    ) {
-                        for part in other_switch {
-                            if !switch.contains(part) {
-                                switch.push(part.clone());
+                    match (&mut self.switches.$switch, &other.switches.$switch) {
+                        (None, Some(other_switch)) => {
+                            self.switches.$switch = Some(other_switch.clone());
+                        },
+                        (Some(self_switch), Some(other_switch)) => {
+                            for part in other_switch {
+                                if !self_switch.contains(part) {
+                                    self_switch.push(part.clone());
+                                }
                             }
-                        }
+                        },
+                        _ => {}
                     }
                 )*
             };
