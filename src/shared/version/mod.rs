@@ -28,21 +28,23 @@ impl Version {
     const SEPARATOR: char = '.';
 
     pub fn new<T: AsRef<str>>(input: T) -> Self {
-        let mut trimmed = input.as_ref().trim();
+        let raw_version = input.as_ref().trim();
+
+        let mut version = raw_version;
 
         // If there is a digit before the separator, or no separators, trim off all leading
         // non-digit characters
-        if let Some(digit_pos) = trimmed.find(|char: char| char.is_ascii_digit()) {
-            if trimmed
+        if let Some(digit_pos) = raw_version.find(|char: char| char.is_ascii_digit()) {
+            if raw_version
                 .find('.')
                 .is_none_or(|separator_pos| digit_pos < separator_pos)
             {
-                trimmed = &trimmed[digit_pos..];
+                version = &raw_version[digit_pos..];
             }
         }
 
         // Split the version into parts by the separator `.`
-        let mut parts = trimmed
+        let mut parts = version
             .split(Self::SEPARATOR)
             .map(VersionPart::from)
             .collect::<SmallVec<[_; 6]>>();
@@ -55,7 +57,7 @@ impl Version {
         }
 
         Self {
-            raw: CompactString::from(trimmed),
+            raw: CompactString::from(raw_version),
             parts,
         }
     }
@@ -379,6 +381,18 @@ mod tests {
     #[case("")]
     fn only_droppable_parts(#[case] version: Version) {
         assert_eq!(version.parts.len(), 0);
+    }
+
+    #[rstest]
+    #[case("v123")]
+    #[case("v1.2.3")]
+    #[case("1.a2")]
+    #[case("alpha")]
+    fn version_display_round_trip(#[case] raw_version: &str) {
+        use alloc::string::ToString;
+
+        // The string representation of the parsed version should be the same as the raw version
+        assert_eq!(Version::new(raw_version).to_string(), raw_version.trim())
     }
 
     #[rstest]
