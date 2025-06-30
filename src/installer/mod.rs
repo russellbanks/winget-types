@@ -511,6 +511,7 @@ impl InstallerManifest {
             switches.install_location,
             switches.log,
             switches.upgrade,
+            switches.custom,
             switches.repair,
             success_codes,
             expected_return_codes,
