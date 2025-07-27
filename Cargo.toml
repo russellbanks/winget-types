@@ -63,6 +63,6 @@ time = ["dep:time"]
 
 [dev-dependencies]
 indoc = "2"
-rstest = "0.25"
+rstest = "0.26"
 rustc-hash = { version = "2", default-features = false }
 serde_yaml = "0.9"
