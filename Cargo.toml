@@ -10,7 +10,7 @@ keywords = ["winget"]
 categories = ["api-bindings", "no-std"]
 
 [dependencies]
-base16ct = { version = "0.2", default-features = false }
+base16ct = { version = "0.3", default-features = false }
 bitflags = { version = "2", default-features = false }
 camino = { version = "1", default-features = false, optional = true }
 chrono = { version = "0.4", default-features = false, optional = true }
