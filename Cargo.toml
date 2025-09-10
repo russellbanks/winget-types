@@ -2,7 +2,7 @@
 name = "winget-types"
 version = "0.3.2"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.87"
 description = "WinGet Types"
 repository = "https://github.com/russellbanks/winget-types"
 license = "MIT OR Apache-2.0"
@@ -15,7 +15,7 @@ bitflags = { version = "2", default-features = false }
 camino = { version = "1", default-features = false, optional = true }
 chrono = { version = "0.4", default-features = false, optional = true }
 compact_str = { version = "0.9", default-features = false }
-heapless = { version = "0.8", default-features = false }
+heapless = { version = "0.9", default-features = false }
 icu_locid = { version = "1", default-features = false }
 itertools = { version = "0.14", default-features = false }
 jiff = { version = "0.2", default-features = false, optional = true }

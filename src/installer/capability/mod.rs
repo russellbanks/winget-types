@@ -195,7 +195,7 @@ impl FromStr for Capability {
             "wiFiControl" => Ok(Self::WiFiControl),
             _ => Err(Self::Err::Unknown(
                 s.parse::<String<{ Self::MAX_LEN }>>()
-                    .map_err(|()| Self::Err::TooLong(s.len()))?,
+                    .map_err(|_| Self::Err::TooLong(s.len()))?,
             )),
         }
     }

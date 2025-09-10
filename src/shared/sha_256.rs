@@ -34,7 +34,7 @@ impl Sha256String {
             base16ct::upper::encode_str(digest, &mut encode_buf)
                 .unwrap_or_else(|_| unreachable!("SHA256 digests should always be 32 bytes long"))
                 .parse::<String<SHA256_LEN>>()
-                .unwrap_or_else(|()| {
+                .unwrap_or_else(|_| {
                     unreachable!("Sha256 hashes should always be {SHA256_LEN} bytes long")
                 }),
         )
