@@ -35,7 +35,7 @@ impl Market {
         let market = market
             .as_ref()
             .parse::<String<{ Self::LEN }>>()
-            .map_err(|()| MarketError::InvalidLength)?;
+            .map_err(|_| MarketError::InvalidLength)?;
 
         if market.len() != Self::LEN {
             return Err(MarketError::InvalidLength);

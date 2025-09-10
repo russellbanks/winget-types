@@ -354,7 +354,7 @@ impl FromStr for RestrictedCapability {
             "xboxAccessoryManagement" => Ok(Self::XboxAccessoryManagement),
             _ => Err(Self::Err::Unknown(
                 s.parse::<heapless::String<{ Self::MAX_LEN }>>()
-                    .map_err(|()| Self::Err::TooLong(s.len()))?,
+                    .map_err(|_| Self::Err::TooLong(s.len()))?,
             )),
         }
     }
