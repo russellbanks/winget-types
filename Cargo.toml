@@ -45,7 +45,6 @@ serde = [
 ]
 std = [
     "dep:camino",
-    "base16ct/std",
     "bitflags/std",
     "chrono?/std",
     "compact_str/std",
