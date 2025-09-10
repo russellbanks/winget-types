@@ -304,7 +304,7 @@ impl Markets {
 
     /// Gets an iterator that visits the elements in `Markets` in ascending order.
     #[inline]
-    pub fn iter(&self) -> alloc::collections::btree_set::Iter<Market> {
+    pub fn iter(&self) -> alloc::collections::btree_set::Iter<'_, Market> {
         self.into_iter()
     }
 }

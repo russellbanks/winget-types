@@ -36,7 +36,7 @@ impl<const N: usize> InstallerSwitch<N> {
     }
 
     #[inline]
-    pub fn iter(&self) -> core::slice::Iter<CompactString> {
+    pub fn iter(&self) -> core::slice::Iter<'_, CompactString> {
         self.0.iter()
     }
 }

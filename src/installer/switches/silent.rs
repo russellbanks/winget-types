@@ -14,7 +14,7 @@ pub struct SilentSwitch(InstallerSwitch<512>);
 
 impl SilentSwitch {
     #[inline]
-    pub fn iter(&self) -> core::slice::Iter<CompactString> {
+    pub fn iter(&self) -> core::slice::Iter<'_, CompactString> {
         self.0.iter()
     }
 }

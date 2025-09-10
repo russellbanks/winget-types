@@ -84,7 +84,7 @@ impl TryFrom<String> for ReleaseNotes {
     }
 }
 
-fn truncate_with_lines<const N: usize>(value: &str) -> Cow<str> {
+fn truncate_with_lines<const N: usize>(value: &str) -> Cow<'_, str> {
     if value.chars().count() <= N {
         return Cow::Borrowed(value);
     }
