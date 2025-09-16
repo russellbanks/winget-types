@@ -206,6 +206,40 @@ impl InstallerReturnCode {
             Self::Negative(n) => Some(n.get()),           // i32::MIN..=-1
         }
     }
+
+    /// Returns `true` if the return code is positive.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use winget_types::installer::InstallerReturnCode;
+    ///
+    /// let return_code = InstallerReturnCode::from_u32(100).unwrap();
+    /// assert!(return_code.is_positive());
+    /// assert!(!return_code.is_negative());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_positive(self) -> bool {
+        matches!(self, Self::Positive(_))
+    }
+
+    /// Returns `true` if the return code is negative.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use winget_types::installer::InstallerReturnCode;
+    ///
+    /// let return_code = InstallerReturnCode::from_i32(-1).unwrap();
+    /// assert!(return_code.is_negative());
+    /// assert!(!return_code.is_positive());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_negative(self) -> bool {
+        matches!(self, Self::Negative(_))
+    }
 }
 
 impl fmt::Display for InstallerReturnCode {
