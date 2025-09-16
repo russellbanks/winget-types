@@ -26,6 +26,66 @@ impl MinimumOSVersion {
     pub const fn new(major: u16, minor: u16, patch: u16, build: u16) -> Self {
         Self(major, minor, patch, build)
     }
+
+    /// Returns the major version.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use winget_types::installer::MinimumOSVersion;
+    /// let minimum_os_version = MinimumOSVersion::new(10, 0, 17763, 0);
+    /// assert_eq!(minimum_os_version.major(), 10);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn major(&self) -> u16 {
+        self.0
+    }
+
+    /// Returns the minor version.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use winget_types::installer::MinimumOSVersion;
+    /// let minimum_os_version = MinimumOSVersion::new(1, 2, 3, 4);
+    /// assert_eq!(minimum_os_version.minor(), 2);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn minor(&self) -> u16 {
+        self.1
+    }
+
+    /// Returns the patch version.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use winget_types::installer::MinimumOSVersion;
+    /// let minimum_os_version = MinimumOSVersion::new(1, 2, 3, 4);
+    /// assert_eq!(minimum_os_version.patch(), 3);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn patch(&self) -> u16 {
+        self.2
+    }
+
+    /// Returns the build version.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use winget_types::installer::MinimumOSVersion;
+    /// let minimum_os_version = MinimumOSVersion::new(1, 2, 3, 4);
+    /// assert_eq!(minimum_os_version.build(), 4);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn build(&self) -> u16 {
+        self.3
+    }
 }
 
 impl fmt::Display for MinimumOSVersion {
@@ -49,6 +109,13 @@ impl FromStr for MinimumOSVersion {
         let build = parts.next().map_or(Ok(0), str::parse::<u16>)?;
 
         Ok(Self(major, minor, patch, build))
+    }
+}
+
+impl From<(u16, u16, u16, u16)> for MinimumOSVersion {
+    #[inline]
+    fn from((major, minor, patch, build): (u16, u16, u16, u16)) -> Self {
+        Self::new(major, minor, patch, build)
     }
 }
 
