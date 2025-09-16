@@ -1,6 +1,6 @@
 use core::fmt;
 
-use icu_locid::LanguageIdentifier;
+use icu_locale::LanguageIdentifier;
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

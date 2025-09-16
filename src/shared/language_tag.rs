@@ -1,6 +1,6 @@
 use core::{cmp::Ordering, fmt, str::FromStr};
 
-use icu_locid::{LanguageIdentifier, ParserError, langid};
+use icu_locale::{LanguageIdentifier, ParseError, langid};
 
 /// An orderable wrapper around [`LanguageIdentifier`].
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
@@ -30,10 +30,10 @@ impl fmt::Display for LanguageTag {
 }
 
 impl FromStr for LanguageTag {
-    type Err = ParserError;
+    type Err = ParseError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        LanguageIdentifier::from_str(source).map(Self)
+        source.parse().map(Self)
     }
 }
 

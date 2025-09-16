@@ -11,15 +11,15 @@ categories = ["api-bindings", "no-std"]
 
 [dependencies]
 base16ct = { version = "0.3", default-features = false }
-bitflags = { version = "2", default-features = false }
+bitflags = { version = "2.3", default-features = false }
 camino = { version = "1", default-features = false, optional = true }
 chrono = { version = "0.4", default-features = false, optional = true }
 compact_str = { version = "0.9", default-features = false }
 heapless = { version = "0.9", default-features = false }
-icu_locid = { version = "1", default-features = false }
+icu_locale = { version = "2", default-features = false }
 itertools = { version = "0.14", default-features = false }
 jiff = { version = "0.2", default-features = false, optional = true }
-package-family-name = { version = "2", default-features = false }
+package-family-name = { version = "2.1", default-features = false }
 percent-encoding = { version = "2", default-features = false }
 serde = { version = "1", default-features = false, features = ["alloc", "derive"], optional = true }
 sha2 = { version = "0.10", default-features = false }
@@ -37,7 +37,7 @@ serde = [
     "chrono?/serde",
     "compact_str/serde",
     "heapless/serde",
-    "icu_locid/serde",
+    "icu_locale/serde",
     "jiff?/serde",
     "package-family-name/serde",
     "time?/serde-human-readable",
@@ -48,7 +48,6 @@ std = [
     "bitflags/std",
     "chrono?/std",
     "compact_str/std",
-    "icu_locid/std",
     "itertools/use_std",
     "jiff?/std",
     "percent-encoding/std",

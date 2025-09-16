@@ -75,6 +75,24 @@ jobs:
       - name: Check for unused dependencies
         run: cargo machete
 
+  minimal_versions:
+    name: Minimal dependency versions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install cargo-minimal-versions
+        uses: moonrepo/setup-rust@v1
+        with:
+          bins: cargo-hack, cargo-minimal-versions
+
+      - name: Add nightly Rust toolchain
+        run: rustup toolchain add nightly --profile minimal --no-self-update
+
+      - name: Check minimal versions
+        run: cargo minimal-versions check
+
   miri:
     name: Miri
     runs-on: ubuntu-latest
@@ -88,7 +106,7 @@ jobs:
           components: miri
 
       - name: Setup Miri
-        run: cargo +nightly miri setup
+        run: cargo miri setup
 
       - name: Test with Miri
-        run: cargo +nightly miri test
+        run: cargo miri test

@@ -5,7 +5,7 @@ extern crate core;
 
 #[cfg(feature = "std")]
 pub use camino;
-pub use icu_locid;
+pub use icu_locale;
 pub use sha2;
 pub use shared::*;
 

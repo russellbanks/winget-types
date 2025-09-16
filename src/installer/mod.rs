@@ -281,8 +281,11 @@ pub struct InstallerManifest {
     /// in Windows via Add / Remove Programs for list, and upgrade behavior.
     ///
     /// [package family name]: https://learn.microsoft.com/windows/apps/desktop/modernize/package-identity-overview#package-family-name
-    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
-    pub package_family_name: Option<PackageFamilyName>,
+    #[cfg_attr(
+        feature = "serde",
+        serde(borrow, skip_serializing_if = "Option::is_none")
+    )]
+    pub package_family_name: Option<PackageFamilyName<'static>>,
 
     /// The [product code].
     ///
@@ -735,8 +738,11 @@ pub struct Installer {
     /// in Windows via Add / Remove Programs for list, and upgrade behavior.
     ///
     /// [package family name]: https://learn.microsoft.com/windows/apps/desktop/modernize/package-identity-overview#package-family-name
-    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
-    pub package_family_name: Option<PackageFamilyName>,
+    #[cfg_attr(
+        feature = "serde",
+        serde(borrow, skip_serializing_if = "Option::is_none")
+    )]
+    pub package_family_name: Option<PackageFamilyName<'static>>,
 
     /// The [product code].
     ///
