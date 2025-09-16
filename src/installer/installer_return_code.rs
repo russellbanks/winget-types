@@ -29,8 +29,8 @@ impl InstallerReturnCode {
     /// use core::num::NonZeroI32;
     /// use winget_types::installer::InstallerReturnCode;
     ///
-    /// assert_eq!(InstallerReturnCode::MIN.i32(), Some(i32::MIN));
-    /// assert_eq!(InstallerReturnCode::MIN.i32(), Some(NonZeroI32::MIN.get()));
+    /// assert_eq!(InstallerReturnCode::MIN.to_i32(), Some(i32::MIN));
+    /// assert_eq!(InstallerReturnCode::MIN.to_i32(), Some(NonZeroI32::MIN.get()));
     /// ```
     pub const MIN: Self = Self::Negative(NonZeroI32::MIN);
 
@@ -43,8 +43,8 @@ impl InstallerReturnCode {
     /// use core::num::NonZeroU32;
     /// use winget_types::installer::InstallerReturnCode;
     ///
-    /// assert_eq!(InstallerReturnCode::MAX.u32(), Some(u32::MAX));
-    /// assert_eq!(InstallerReturnCode::MAX.u32(), Some(NonZeroU32::MAX.get()));
+    /// assert_eq!(InstallerReturnCode::MAX.to_u32(), Some(u32::MAX));
+    /// assert_eq!(InstallerReturnCode::MAX.to_u32(), Some(NonZeroU32::MAX.get()));
     /// ```
     pub const MAX: Self = Self::Positive(NonZeroU32::MAX);
 
@@ -170,13 +170,13 @@ impl InstallerReturnCode {
     /// use winget_types::installer::InstallerReturnCode;
     ///
     /// let return_code = InstallerReturnCode::from_u32(50).unwrap();
-    /// assert_eq!(return_code.u32(), Some(50));
+    /// assert_eq!(return_code.to_u32(), Some(50));
     ///
     /// let return_code = InstallerReturnCode::from_i32(-1).unwrap();
-    /// assert!(return_code.u32().is_none());
+    /// assert!(return_code.to_u32().is_none());
     /// ```
     #[must_use]
-    pub const fn u32(self) -> Option<u32> {
+    pub const fn to_u32(self) -> Option<u32> {
         match self {
             Self::Positive(n) => Some(n.get()), // 1..=u32::MAX
             Self::Negative(_) => None,          // Negative values can never convert into a u32
@@ -191,16 +191,16 @@ impl InstallerReturnCode {
     /// use winget_types::installer::InstallerReturnCode;
     ///
     /// let return_code = InstallerReturnCode::from_i32(-1).unwrap();
-    /// assert_eq!(return_code.i32(), Some(-1));
+    /// assert_eq!(return_code.to_i32(), Some(-1));
     ///
     /// let return_code = InstallerReturnCode::from_u32(100).unwrap();
-    /// assert_eq!(return_code.i32(), Some(100));
+    /// assert_eq!(return_code.to_i32(), Some(100));
     ///
     /// let return_code = InstallerReturnCode::from_u32((i32::MAX as u32) + 1).unwrap();
-    /// assert!(return_code.i32().is_none());
+    /// assert!(return_code.to_i32().is_none());
     /// ```
     #[must_use]
-    pub fn i32(self) -> Option<i32> {
+    pub fn to_i32(self) -> Option<i32> {
         match self {
             Self::Positive(n) => n.get().try_into().ok(), // 1..=i32::MAX
             Self::Negative(n) => Some(n.get()),           // i32::MIN..=-1
