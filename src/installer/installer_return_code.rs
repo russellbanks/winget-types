@@ -240,6 +240,30 @@ impl InstallerReturnCode {
     pub const fn is_negative(self) -> bool {
         matches!(self, Self::Negative(_))
     }
+
+    /// Returns a number representing sign of `self`.
+    ///
+    /// - `1` if the return code is positive
+    /// - `-1` if the return code is negative
+    ///
+    /// # Examples
+    /// ```
+    /// use winget_types::installer::InstallerReturnCode;
+    ///
+    /// # fn doctest() -> Option<()> {
+    /// assert_eq!(InstallerReturnCode::from_u32(10)?.signum(), 1);
+    /// assert_eq!(InstallerReturnCode::from_i32(-10)?.signum(), -1);
+    /// # Some(())
+    /// # }
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn signum(self) -> i8 {
+        match self {
+            Self::Positive(_) => 1,
+            Self::Negative(_) => -1,
+        }
+    }
 }
 
 impl fmt::Display for InstallerReturnCode {
