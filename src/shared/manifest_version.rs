@@ -31,6 +31,51 @@ impl ManifestVersion {
     pub const fn new(major: u16, minor: u16, patch: u16) -> Self {
         Self(major, minor, patch)
     }
+
+    /// Returns the major version.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use winget_types::ManifestVersion;
+    /// let minimum_os_version = ManifestVersion::new(1, 9, 0);
+    /// assert_eq!(minimum_os_version.major(), 1);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn major(&self) -> u16 {
+        self.0
+    }
+
+    /// Returns the minor version.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use winget_types::ManifestVersion;
+    /// let minimum_os_version = ManifestVersion::new(1, 9, 0);
+    /// assert_eq!(minimum_os_version.minor(), 9);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn minor(&self) -> u16 {
+        self.1
+    }
+
+    /// Returns the patch version.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use winget_types::ManifestVersion;
+    /// let minimum_os_version = ManifestVersion::new(1, 9, 0);
+    /// assert_eq!(minimum_os_version.patch(), 0);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn patch(&self) -> u16 {
+        self.2
+    }
 }
 
 impl Default for ManifestVersion {
@@ -64,7 +109,13 @@ impl FromStr for ManifestVersion {
             .ok_or(ManifestVersionError::NoPatchVersion)?
             .parse::<u16>()?;
 
-        Ok(Self(major, minor, patch))
+        Ok(Self::new(major, minor, patch))
+    }
+}
+
+impl From<(u16, u16, u16)> for ManifestVersion {
+    fn from((major, minor, patch): (u16, u16, u16)) -> Self {
+        Self::new(major, minor, patch)
     }
 }
 
