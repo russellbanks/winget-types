@@ -15,8 +15,11 @@ pub type InstallerSuccessCode = InstallerReturnCode;
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(untagged))]
 pub enum InstallerReturnCode {
-    Positive(NonZeroU32), // Holds values greater than 0
-    Negative(NonZeroI32), // Holds values less than 0
+    /// Installer Return Code that holds values greater than 0 (1..=[`u32::MAX`]).
+    Positive(NonZeroU32),
+
+    /// Installer Return Code that holds values less than 0 ([`i32::MIN`]..=-1).
+    Negative(NonZeroI32),
 }
 
 impl InstallerReturnCode {
@@ -149,9 +152,12 @@ impl InstallerReturnCode {
     /// ```
     /// use winget_types::installer::InstallerReturnCode;
     ///
-    /// assert_eq!(InstallerReturnCode::new(1).unwrap().get(), 1i64);
-    /// assert_eq!(InstallerReturnCode::MAX.get(), 4294967295i64);
-    /// assert_eq!(InstallerReturnCode::MIN.get(), -2147483648i64);
+    /// # fn doctest() -> Option<()> {
+    /// assert_eq!(InstallerReturnCode::new(1)?.get(), 1_i64);
+    /// assert_eq!(InstallerReturnCode::MAX.get(), 4_294_967_295_i64);
+    /// assert_eq!(InstallerReturnCode::MIN.get(), -2_147_483_648_i64);
+    /// # Some(())
+    /// # }
     /// ```
     #[must_use]
     #[inline]
@@ -169,11 +175,14 @@ impl InstallerReturnCode {
     /// ```
     /// use winget_types::installer::InstallerReturnCode;
     ///
-    /// let return_code = InstallerReturnCode::from_u32(50).unwrap();
+    /// # fn doctest() -> Option<()> {
+    /// let return_code = InstallerReturnCode::from_u32(50)?;
     /// assert_eq!(return_code.to_u32(), Some(50));
     ///
-    /// let return_code = InstallerReturnCode::from_i32(-1).unwrap();
+    /// let return_code = InstallerReturnCode::from_i32(-1)?;
     /// assert!(return_code.to_u32().is_none());
+    /// # Some(())
+    /// # }
     /// ```
     #[must_use]
     pub const fn to_u32(self) -> Option<u32> {
@@ -190,14 +199,17 @@ impl InstallerReturnCode {
     /// ```
     /// use winget_types::installer::InstallerReturnCode;
     ///
-    /// let return_code = InstallerReturnCode::from_i32(-1).unwrap();
+    /// # fn doctest() -> Option<()> {
+    /// let return_code = InstallerReturnCode::from_i32(-1)?;
     /// assert_eq!(return_code.to_i32(), Some(-1));
     ///
-    /// let return_code = InstallerReturnCode::from_u32(100).unwrap();
+    /// let return_code = InstallerReturnCode::from_u32(100)?;
     /// assert_eq!(return_code.to_i32(), Some(100));
     ///
-    /// let return_code = InstallerReturnCode::from_u32((i32::MAX as u32) + 1).unwrap();
+    /// let return_code = InstallerReturnCode::from_u32((i32::MAX as u32) + 1)?;
     /// assert!(return_code.to_i32().is_none());
+    /// # Some(())
+    /// # }
     /// ```
     #[must_use]
     pub fn to_i32(self) -> Option<i32> {
@@ -214,9 +226,12 @@ impl InstallerReturnCode {
     /// ```
     /// use winget_types::installer::InstallerReturnCode;
     ///
-    /// let return_code = InstallerReturnCode::from_u32(100).unwrap();
+    /// # fn doctest() -> Option<()> {
+    /// let return_code = InstallerReturnCode::from_u32(100)?;
     /// assert!(return_code.is_positive());
     /// assert!(!return_code.is_negative());
+    /// # Some(())
+    /// # }
     /// ```
     #[must_use]
     #[inline]
@@ -231,9 +246,12 @@ impl InstallerReturnCode {
     /// ```
     /// use winget_types::installer::InstallerReturnCode;
     ///
-    /// let return_code = InstallerReturnCode::from_i32(-1).unwrap();
+    /// # fn doctest() -> Option<()> {
+    /// let return_code = InstallerReturnCode::from_i32(-1)?;
     /// assert!(return_code.is_negative());
     /// assert!(!return_code.is_positive());
+    /// # Some(())
+    /// # }
     /// ```
     #[must_use]
     #[inline]
