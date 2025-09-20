@@ -1,6 +1,6 @@
 #![expect(clippy::struct_excessive_bools)]
 
-mod apps_and_features_entry;
+mod apps_and_features_entries;
 mod architecture;
 pub mod authentication;
 mod capability;
@@ -29,7 +29,7 @@ mod upgrade_behavior;
 
 use alloc::{collections::BTreeSet, string::String, vec::Vec};
 
-pub use apps_and_features_entry::AppsAndFeaturesEntry;
+pub use apps_and_features_entries::{AppsAndFeaturesEntries, AppsAndFeaturesEntry};
 pub use architecture::{Architecture, ParseArchitectureError};
 pub use authentication::Authentication;
 pub use capability::{Capability, CapabilityError, RestrictedCapability};
@@ -393,9 +393,9 @@ pub struct InstallerManifest {
     /// When a package is installed, entries are made into the Windows Registry.
     #[cfg_attr(
         feature = "serde",
-        serde(skip_serializing_if = "Vec::is_empty", default)
+        serde(skip_serializing_if = "AppsAndFeaturesEntries::is_empty", default)
     )]
-    pub apps_and_features_entries: Vec<AppsAndFeaturesEntry>,
+    pub apps_and_features_entries: AppsAndFeaturesEntries,
 
     /// The scope in which scope a package is required to be executed under.
     ///
@@ -850,9 +850,9 @@ pub struct Installer {
     /// When a package is installed, entries are made into the Windows Registry.
     #[cfg_attr(
         feature = "serde",
-        serde(skip_serializing_if = "Vec::is_empty", default)
+        serde(skip_serializing_if = "AppsAndFeaturesEntries::is_empty", default)
     )]
-    pub apps_and_features_entries: Vec<AppsAndFeaturesEntry>,
+    pub apps_and_features_entries: AppsAndFeaturesEntries,
 
     /// The scope in which scope a package is required to be executed under.
     ///
