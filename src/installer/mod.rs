@@ -281,10 +281,7 @@ pub struct InstallerManifest {
     /// in Windows via Add / Remove Programs for list, and upgrade behavior.
     ///
     /// [package family name]: https://learn.microsoft.com/windows/apps/desktop/modernize/package-identity-overview#package-family-name
-    #[cfg_attr(
-        feature = "serde",
-        serde(borrow, skip_serializing_if = "Option::is_none")
-    )]
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub package_family_name: Option<PackageFamilyName<'static>>,
 
     /// The [product code].
@@ -738,10 +735,7 @@ pub struct Installer {
     /// in Windows via Add / Remove Programs for list, and upgrade behavior.
     ///
     /// [package family name]: https://learn.microsoft.com/windows/apps/desktop/modernize/package-identity-overview#package-family-name
-    #[cfg_attr(
-        feature = "serde",
-        serde(borrow, skip_serializing_if = "Option::is_none")
-    )]
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub package_family_name: Option<PackageFamilyName<'static>>,
 
     /// The [product code].
@@ -1057,14 +1051,17 @@ mod tests {
             installers: vec![
                 Installer {
                     architecture: Architecture::X86,
-                    switches: InstallerSwitches::new()
-                        .silent("--silent")
-                        .custom("--custom"),
+                    switches: InstallerSwitches::builder()
+                        .maybe_silent("--silent".parse().ok())
+                        .maybe_custom("--custom".parse().ok())
+                        .build(),
                     ..Installer::default()
                 },
                 Installer {
                     architecture: Architecture::X64,
-                    switches: InstallerSwitches::new().silent("--silent"),
+                    switches: InstallerSwitches::builder()
+                        .maybe_silent("--silent".parse().ok())
+                        .build(),
                     ..Installer::default()
                 },
             ],
@@ -1076,11 +1073,15 @@ mod tests {
         assert_eq!(
             manifest,
             InstallerManifest {
-                switches: InstallerSwitches::new().silent("--silent"),
+                switches: InstallerSwitches::builder()
+                    .maybe_silent("--silent".parse().ok())
+                    .build(),
                 installers: vec![
                     Installer {
                         architecture: Architecture::X86,
-                        switches: InstallerSwitches::new().custom("--custom"),
+                        switches: InstallerSwitches::builder()
+                            .maybe_custom("--custom".parse().ok())
+                            .build(),
                         ..Installer::default()
                     },
                     Installer {
