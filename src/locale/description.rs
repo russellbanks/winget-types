@@ -57,7 +57,7 @@ impl Description {
     /// Extracts a string slice containing the entire `Description`.
     #[must_use]
     #[inline]
-    pub fn as_str(&self) -> &str {
+    pub const fn as_str(&self) -> &str {
         self.0.as_str()
     }
 }

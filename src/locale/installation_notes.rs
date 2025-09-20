@@ -60,7 +60,7 @@ impl InstallationNotes {
     /// Extracts a string slice containing the entire `InstallationNotes`.
     #[must_use]
     #[inline]
-    pub fn as_str(&self) -> &str {
+    pub const fn as_str(&self) -> &str {
         self.0.as_str()
     }
 }
