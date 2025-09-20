@@ -25,28 +25,35 @@ pub enum ReturnResponse {
     Custom,
 }
 
+impl ReturnResponse {
+    /// Returns the return response type as a static string.
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::PackageInUse => "Package in use",
+            Self::PackageInUseByApplication => "Package in use by application",
+            Self::InstallInProgress => "Install in progress",
+            Self::FileInUse => "File in use",
+            Self::MissingDependency => "Missing dependency",
+            Self::DiskFull => "Disk full",
+            Self::InsufficientMemory => "Insufficient memory",
+            Self::InvalidParameter => "Invalid parameter",
+            Self::NoNetwork => "No network",
+            Self::ContactSupport => "Contact support",
+            Self::RebootRequiredToFinish => "Reboot required to finish",
+            Self::RebootRequiredForInstall => "Reboot required to install",
+            Self::RebootInitiated => "Reboot initiated",
+            Self::CancelledByUser => "Cancelled by user",
+            Self::AlreadyInstalled => "Already installed",
+            Self::Downgrade => "Downgrade",
+            Self::BlockedByPolicy => "Blocked by policy",
+            Self::SystemNotSupported => "System not supported",
+            Self::Custom => "Custom",
+        }
+    }
+}
+
 impl fmt::Display for ReturnResponse {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::PackageInUse => f.write_str("Package in use"),
-            Self::PackageInUseByApplication => f.write_str("Package in use by application"),
-            Self::InstallInProgress => f.write_str("Install in progress"),
-            Self::FileInUse => f.write_str("File in use"),
-            Self::MissingDependency => f.write_str("Missing dependency"),
-            Self::DiskFull => f.write_str("Disk full"),
-            Self::InsufficientMemory => f.write_str("Insufficient memory"),
-            Self::InvalidParameter => f.write_str("Invalid parameter"),
-            Self::NoNetwork => f.write_str("No network"),
-            Self::ContactSupport => f.write_str("Contact support"),
-            Self::RebootRequiredToFinish => f.write_str("Reboot required to finish"),
-            Self::RebootRequiredForInstall => f.write_str("Reboot required to install"),
-            Self::RebootInitiated => f.write_str("Reboot initiated"),
-            Self::CancelledByUser => f.write_str("Cancelled by user"),
-            Self::AlreadyInstalled => f.write_str("Already installed"),
-            Self::Downgrade => f.write_str("Downgrade"),
-            Self::BlockedByPolicy => f.write_str("Blocked by policy"),
-            Self::SystemNotSupported => f.write_str("System not supported"),
-            Self::Custom => f.write_str("Custom"),
-        }
+        self.as_str().fmt(f)
     }
 }
