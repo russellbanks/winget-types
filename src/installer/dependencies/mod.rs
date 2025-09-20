@@ -50,10 +50,9 @@ impl Dependencies {
     ///
     /// # Examples
     /// ```
-    /// use std::collections::BTreeSet;
-    /// use winget_types::installer::{Dependencies, PackageDependencies};
-    /// use winget_types::PackageIdentifier;
-    /// # use winget_types::PackageIdentifierError;
+    /// # use std::collections::BTreeSet;
+    /// # use winget_types::installer::{Dependencies, PackageDependencies};
+    /// # use winget_types::{PackageIdentifier, PackageIdentifierError};
     ///
     /// # fn main() -> Result<(), PackageIdentifierError> {
     /// let mut dependencies = Dependencies {

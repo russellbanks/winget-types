@@ -6,6 +6,7 @@ extern crate core;
 #[cfg(feature = "std")]
 pub use camino;
 pub use icu_locale;
+pub use package_family_name;
 pub use sha2;
 pub use shared::*;
 

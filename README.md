@@ -11,7 +11,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-winget-types = "0.3"
+winget-types = "0.4"
 ```
 
 ## License
