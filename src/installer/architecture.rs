@@ -58,42 +58,6 @@ const ARCHITECTURES: [(&str, Architecture); 32] = [
 ];
 
 impl Architecture {
-    /// Returns `true` if the architecture is a 64-bit architecture.
-    ///
-    /// # Examples
-    /// ```
-    /// use winget_types::installer::Architecture;
-    ///
-    /// assert!(Architecture::X64.is_64_bit());
-    /// assert!(Architecture::Arm64.is_64_bit());
-    /// assert!(!Architecture::X86.is_64_bit());
-    /// assert!(!Architecture::Arm.is_64_bit());
-    /// assert!(!Architecture::Neutral.is_64_bit());
-    /// ```
-    #[must_use]
-    #[inline]
-    pub const fn is_64_bit(self) -> bool {
-        matches!(self, Self::X64 | Self::Arm64)
-    }
-
-    /// Returns `true` if the architecture is a 32-bit architecture.
-    ///
-    /// # Examples
-    /// ```
-    /// use winget_types::installer::Architecture;
-    ///
-    /// assert!(Architecture::X86.is_32_bit());
-    /// assert!(Architecture::Arm.is_32_bit());
-    /// assert!(!Architecture::X64.is_32_bit());
-    /// assert!(!Architecture::Arm64.is_32_bit());
-    /// assert!(!Architecture::Neutral.is_32_bit());
-    /// ```
-    #[must_use]
-    #[inline]
-    pub const fn is_32_bit(self) -> bool {
-        matches!(self, Self::X86 | Self::Arm)
-    }
-
     #[must_use]
     pub fn from_url(url: &str) -> Option<Self> {
         fn is_delimited_at(url_bytes: &[u8], start: usize, len: usize) -> bool {
@@ -150,6 +114,119 @@ impl Architecture {
         }
 
         None
+    }
+
+    /// Returns `true` if the architecture is x86.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use winget_types::installer::Architecture;
+    ///
+    /// assert!(Architecture::X86.is_x86());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_x86(self) -> bool {
+        matches!(self, Self::X86)
+    }
+
+    /// Returns `true` if the architecture is x64.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use winget_types::installer::Architecture;
+    ///
+    /// assert!(Architecture::X64.is_x64());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_x64(self) -> bool {
+        matches!(self, Self::X64)
+    }
+
+    /// Returns `true` if the architecture is ARM.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use winget_types::installer::Architecture;
+    ///
+    /// assert!(Architecture::Arm.is_arm());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_arm(self) -> bool {
+        matches!(self, Self::Arm)
+    }
+
+    /// Returns `true` if the architecture is ARM64.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use winget_types::installer::Architecture;
+    ///
+    /// assert!(Architecture::Arm64.is_arm64());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_arm64(self) -> bool {
+        matches!(self, Self::Arm64)
+    }
+
+    /// Returns `true` if the architecture is neutral.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use winget_types::installer::Architecture;
+    ///
+    /// assert!(Architecture::Neutral.is_neutral());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_neutral(self) -> bool {
+        matches!(self, Self::Neutral)
+    }
+
+    /// Returns `true` if the architecture is a 64-bit architecture.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use winget_types::installer::Architecture;
+    ///
+    /// assert!(Architecture::X64.is_64_bit());
+    /// assert!(Architecture::Arm64.is_64_bit());
+    /// assert!(!Architecture::X86.is_64_bit());
+    /// assert!(!Architecture::Arm.is_64_bit());
+    /// assert!(!Architecture::Neutral.is_64_bit());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_64_bit(self) -> bool {
+        matches!(self, Self::X64 | Self::Arm64)
+    }
+
+    /// Returns `true` if the architecture is a 32-bit architecture.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use winget_types::installer::Architecture;
+    ///
+    /// assert!(Architecture::X86.is_32_bit());
+    /// assert!(Architecture::Arm.is_32_bit());
+    /// assert!(!Architecture::X64.is_32_bit());
+    /// assert!(!Architecture::Arm64.is_32_bit());
+    /// assert!(!Architecture::Neutral.is_32_bit());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn is_32_bit(self) -> bool {
+        matches!(self, Self::X86 | Self::Arm)
     }
 
     #[must_use]
