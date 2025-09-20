@@ -31,8 +31,11 @@ jobs:
       - name: Install cargo-hack
         uses: taiki-e/install-action@cargo-hack
 
-      - name: Test powerset
-        run: cargo hack test --feature-powerset --optional-deps
+      - name: Check powerset
+        run: cargo hack check --feature-powerset --optional-deps
+
+      - name: Run tests
+        run: cargo test --all-features
 
   publish_dry_run:
     name: Publish dry run
