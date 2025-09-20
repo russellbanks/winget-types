@@ -20,7 +20,7 @@ heapless = { version = "0.9", default-features = false }
 icu_locale = { version = "2", default-features = false }
 itertools = { version = "0.14", default-features = false }
 jiff = { version = "0.2", default-features = false, optional = true }
-package-family-name = { version = "2.1", default-features = false }
+package-family-name = { version = "2.1.1", default-features = false }
 percent-encoding = { version = "2", default-features = false }
 serde = { version = "1", default-features = false, features = ["alloc", "derive"], optional = true }
 sha2 = { version = "0.10", default-features = false }
