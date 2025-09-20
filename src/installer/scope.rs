@@ -57,6 +57,20 @@ impl Scope {
             })
     }
 
+    /// Returns `true` if the scope is user.
+    #[must_use]
+    #[inline]
+    pub const fn is_user(&self) -> bool {
+        matches!(self, Self::User)
+    }
+
+    /// Returns `true` if the scope is machine.
+    #[must_use]
+    #[inline]
+    pub const fn is_machine(&self) -> bool {
+        matches!(self, Self::Machine)
+    }
+
     #[must_use]
     pub const fn as_str(&self) -> &'static str {
         match self {
