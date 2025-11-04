@@ -6,6 +6,7 @@ use crate::installer::InstallerType;
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[non_exhaustive]
 pub enum NestedInstallerType {
     Msix,
     Msi,
@@ -16,6 +17,7 @@ pub enum NestedInstallerType {
     Wix,
     Burn,
     Portable,
+    Font,
 }
 
 impl NestedInstallerType {
@@ -30,6 +32,7 @@ impl NestedInstallerType {
             Self::Wix => "wix",
             Self::Burn => "burn",
             Self::Portable => "portable",
+            Self::Font => "font",
         }
     }
 }
@@ -46,6 +49,7 @@ impl From<NestedInstallerType> for InstallerType {
             NestedInstallerType::Wix => Self::Wix,
             NestedInstallerType::Burn => Self::Burn,
             NestedInstallerType::Portable => Self::Portable,
+            NestedInstallerType::Font => Self::Font,
         }
     }
 }

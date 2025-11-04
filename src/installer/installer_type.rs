@@ -7,6 +7,7 @@ use super::nested::installer_type::NestedInstallerType;
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[non_exhaustive]
 pub enum InstallerType {
     Msix,
     Msi,
@@ -19,6 +20,7 @@ pub enum InstallerType {
     Burn,
     Pwa,
     Portable,
+    Font,
 }
 
 impl InstallerType {
@@ -36,6 +38,7 @@ impl InstallerType {
             Self::Burn => "burn",
             Self::Pwa => "pwa",
             Self::Portable => "portable",
+            Self::Font => "font",
         }
     }
 }
@@ -61,6 +64,7 @@ impl TryFrom<InstallerType> for NestedInstallerType {
             InstallerType::Wix => Ok(Self::Wix),
             InstallerType::Burn => Ok(Self::Burn),
             InstallerType::Portable => Ok(Self::Portable),
+            InstallerType::Font => Ok(Self::Font),
             InstallerType::Zip | InstallerType::Pwa => Err(()),
         }
     }
@@ -92,6 +96,7 @@ impl FromStr for InstallerType {
             "burn" => Ok(Self::Burn),
             "pwa" => Ok(Self::Pwa),
             "portable" => Ok(Self::Portable),
+            "font" => Ok(Self::Font),
             _ => Err(InstallerTypeParseError),
         }
     }
