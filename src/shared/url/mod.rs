@@ -24,11 +24,17 @@ use url::{ParseError, Url};
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct DecodedUrl(Url);
 
-impl FromStr for DecodedUrl {
-    type Err = ParseError;
+impl DecodedUrl {
+    /// Returns the serialization of this URL.
+    #[inline]
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
+    }
+}
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Url::parse(&percent_decode_str(s).decode_utf8_lossy()).map(DecodedUrl)
+impl AsRef<str> for DecodedUrl {
+    fn as_ref(&self) -> &str {
+        self.0.as_ref()
     }
 }
 
@@ -57,5 +63,13 @@ impl DerefMut for DecodedUrl {
 impl fmt::Display for DecodedUrl {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)
+    }
+}
+
+impl FromStr for DecodedUrl {
+    type Err = ParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Url::parse(&percent_decode_str(s).decode_utf8_lossy()).map(Self)
     }
 }

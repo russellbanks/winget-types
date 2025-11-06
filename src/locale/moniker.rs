@@ -8,6 +8,20 @@ use super::{Tag, TagError};
 #[repr(transparent)]
 pub struct Moniker(Tag);
 
+impl Moniker {
+    /// Extracts a string slice containing the entire `Moniker`.
+    #[inline]
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
+    }
+}
+
+impl AsRef<str> for Moniker {
+    fn as_ref(&self) -> &str {
+        self.0.as_ref()
+    }
+}
+
 impl Deref for Moniker {
     type Target = Tag;
 

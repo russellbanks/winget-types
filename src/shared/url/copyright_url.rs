@@ -7,6 +7,19 @@ use super::DecodedUrl;
 #[cfg_attr(feature = "serde", serde(transparent))]
 pub struct CopyrightUrl(DecodedUrl);
 
+impl CopyrightUrl {
+    /// Returns the serialization of this URL.
+    pub fn as_str(&self) -> &str {
+        self.0.as_str()
+    }
+}
+
+impl AsRef<str> for CopyrightUrl {
+    fn as_ref(&self) -> &str {
+        self.0.as_ref()
+    }
+}
+
 impl fmt::Display for CopyrightUrl {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         self.0.fmt(f)
