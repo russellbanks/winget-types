@@ -54,6 +54,7 @@ pub use package_family_name::PackageFamilyName;
 pub use platform::{Platform, PlatformParseError};
 pub use protocol::{Protocol, ProtocolError};
 pub use repair_behavior::RepairBehavior;
+pub use return_response::ReturnResponse;
 pub use scope::{Scope, ScopeParseError};
 pub use switches::InstallerSwitches;
 pub use unsupported_arguments::UnsupportedArguments;
