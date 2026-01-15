@@ -457,7 +457,7 @@ pub struct InstallerManifest {
 
     /// The manifest syntax version.
     ///
-    /// Must have the value `1.10.0`. The Microsoft community package repository validation
+    /// Must have the value `1.12.0`. The Microsoft community package repository validation
     /// pipelines also use this value to determine appropriate validation rules when evaluating this
     /// file.
     #[cfg_attr(feature = "serde", serde(default))]
@@ -465,7 +465,7 @@ pub struct InstallerManifest {
 }
 
 impl Manifest for InstallerManifest {
-    const SCHEMA: &'static str = "https://aka.ms/winget-manifest.installer.1.10.0.schema.json";
+    const SCHEMA: &'static str = "https://aka.ms/winget-manifest.installer.1.12.0.schema.json";
     const TYPE: ManifestType = ManifestType::Installer;
 }
 

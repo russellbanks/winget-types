@@ -51,7 +51,7 @@ pub struct VersionManifest {
 
     /// The manifest syntax version.
     ///
-    /// Must have the value `1.10.0`. The Microsoft community package repository validation
+    /// Must have the value `1.12.0`. The Microsoft community package repository validation
     /// pipelines also use this value to determine appropriate validation rules when evaluating this
     /// file.
     #[cfg_attr(feature = "serde", serde(default))]
@@ -67,7 +67,7 @@ impl VersionManifest {
 }
 
 impl Manifest for VersionManifest {
-    const SCHEMA: &'static str = "https://aka.ms/winget-manifest.version.1.10.0.schema.json";
+    const SCHEMA: &'static str = "https://aka.ms/winget-manifest.version.1.12.0.schema.json";
 
     const TYPE: ManifestType = ManifestType::Version;
 }

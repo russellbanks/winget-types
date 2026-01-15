@@ -21,7 +21,7 @@ pub enum ManifestVersionError {
 }
 
 impl ManifestVersion {
-    pub const DEFAULT: Self = Self(1, 10, 0);
+    pub const DEFAULT: Self = Self(1, 12, 0);
     const PARTS_COUNT: u8 = 3;
     const SEPARATOR: char = '.';
 
