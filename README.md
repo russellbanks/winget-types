@@ -1,6 +1,6 @@
 # WinGet Types
 
-[![CI Status](https://github.com/russellbanks/winget-types/workflows/CI/badge.svg)](https://github.com/russellbanks/winget-types/actions)
+[![CI Status](https://github.com/russellbanks/winget-types/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/russellbanks/winget-types/actions?query=branch:main)
 [![Latest version](https://img.shields.io/crates/v/winget-types.svg)](https://crates.io/crates/winget-types)
 [![Documentation](https://docs.rs/winget-types/badge.svg)](https://docs.rs/winget-types)
 ![License](https://img.shields.io/crates/l/winget-types.svg)
