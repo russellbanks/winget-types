@@ -45,6 +45,6 @@ impl PartialOrd for LanguageTag {
 
 impl Ord for LanguageTag {
     fn cmp(&self, other: &Self) -> Ordering {
-        other.0.total_cmp(&self.0)
+        self.0.total_cmp(&other.0)
     }
 }
