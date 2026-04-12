@@ -63,4 +63,4 @@ time = ["dep:time"]
 indoc = "2"
 rstest = "0.26"
 rustc-hash = { version = "2", default-features = false }
-serde_yaml = "0.9"
+serde_yaml = { package = "yaml_serde", version = "0.10" }
