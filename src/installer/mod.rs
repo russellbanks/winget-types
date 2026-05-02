@@ -283,7 +283,7 @@ pub struct InstallerManifest {
     ///
     /// [package family name]: https://learn.microsoft.com/windows/apps/desktop/modernize/package-identity-overview#package-family-name
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
-    pub package_family_name: Option<PackageFamilyName<'static>>,
+    pub package_family_name: Option<PackageFamilyName>,
 
     /// The [product code].
     ///
@@ -737,7 +737,7 @@ pub struct Installer {
     ///
     /// [package family name]: https://learn.microsoft.com/windows/apps/desktop/modernize/package-identity-overview#package-family-name
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
-    pub package_family_name: Option<PackageFamilyName<'static>>,
+    pub package_family_name: Option<PackageFamilyName>,
 
     /// The [product code].
     ///
