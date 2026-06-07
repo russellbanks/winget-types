@@ -391,13 +391,23 @@ impl_return_code_from_signed_int!(i8 => u8, i16 => u16, i32 => u32);
 
 #[cfg(test)]
 mod tests {
-    use core::num::IntErrorKind;
+    use core::num::{IntErrorKind, NonZeroU32};
 
     #[cfg(feature = "serde")]
     use indoc::indoc;
     use rstest::rstest;
 
     use super::InstallerReturnCode;
+
+    #[test]
+    fn size() {
+        assert_eq!(size_of::<InstallerReturnCode>(), size_of::<u64>());
+    }
+
+    #[test]
+    fn alignment() {
+        assert_eq!(align_of::<InstallerReturnCode>(), align_of::<u32>());
+    }
 
     #[rstest]
     #[case("1", Ok(InstallerReturnCode::from_u32(1).unwrap()))]
@@ -472,7 +482,7 @@ mod tests {
     #[rstest]
     #[case(
         Manifest {
-            installer_return_code: InstallerReturnCode::from_u32(1).unwrap()
+            installer_return_code: InstallerReturnCode::from(NonZeroU32::MIN)
         },
         indoc! {"
             InstallerReturnCode: 1
@@ -488,7 +498,7 @@ mod tests {
     )]
     #[case(
         Manifest {
-            installer_return_code: InstallerReturnCode::from_u32(u32::MAX).unwrap()
+            installer_return_code: InstallerReturnCode::MAX
         },
         indoc! {"
             InstallerReturnCode: 4294967295
@@ -496,7 +506,7 @@ mod tests {
     )]
     #[case(
         Manifest {
-            installer_return_code: InstallerReturnCode::from_i32(i32::MIN).unwrap()
+            installer_return_code: InstallerReturnCode::MIN
         },
         indoc! {"
             InstallerReturnCode: -2147483648
@@ -516,7 +526,7 @@ mod tests {
             InstallerReturnCode: 1
         "},
         Ok(Manifest {
-            installer_return_code: InstallerReturnCode::from_u32(1).unwrap()
+            installer_return_code: InstallerReturnCode::from(NonZeroU32::MIN)
         })
     )]
     #[case(
@@ -538,7 +548,7 @@ mod tests {
             InstallerReturnCode: 4294967295
         "},
         Ok(Manifest {
-            installer_return_code: InstallerReturnCode::from_u32(u32::MAX).unwrap()
+            installer_return_code: InstallerReturnCode::MAX
         })
     )]
     #[case(
@@ -552,7 +562,7 @@ mod tests {
             InstallerReturnCode: -2147483648
         "},
         Ok(Manifest {
-            installer_return_code: InstallerReturnCode::from_i32(i32::MIN).unwrap()
+            installer_return_code: InstallerReturnCode::MIN
         })
     )]
     #[case(

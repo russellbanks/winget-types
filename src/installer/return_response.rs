@@ -57,3 +57,17 @@ impl fmt::Display for ReturnResponse {
         self.as_str().fmt(f)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::ReturnResponse;
+
+    #[test]
+    fn size() {
+        assert_eq!(size_of::<ReturnResponse>(), size_of::<u8>());
+        assert_eq!(
+            size_of::<ReturnResponse>(),
+            size_of::<Option<ReturnResponse>>()
+        );
+    }
+}

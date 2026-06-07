@@ -8,7 +8,7 @@ mod channel;
 mod command;
 mod dependencies;
 mod elevation_requirement;
-mod expected_return_codes;
+mod expected_return_code;
 mod file_extension;
 mod install_modes;
 mod installation_metadata;
@@ -37,7 +37,7 @@ pub use channel::{Channel, ChannelError};
 pub use command::{Command, CommandError};
 pub use dependencies::{Dependencies, PackageDependencies};
 pub use elevation_requirement::ElevationRequirement;
-pub use expected_return_codes::ExpectedReturnCodes;
+pub use expected_return_code::ExpectedReturnCode;
 pub use file_extension::{FileExtension, FileExtensionError};
 pub use install_modes::InstallModes;
 pub use installation_metadata::InstallationMetadata;
@@ -228,7 +228,7 @@ pub struct InstallerManifest {
         feature = "serde",
         serde(skip_serializing_if = "BTreeSet::is_empty", default)
     )]
-    pub expected_return_codes: BTreeSet<ExpectedReturnCodes>,
+    pub expected_return_codes: BTreeSet<ExpectedReturnCode>,
 
     /// What the Windows Package Manager should do regarding the currently installed package during
     /// a package upgrade.
@@ -682,7 +682,7 @@ pub struct Installer {
         feature = "serde",
         serde(skip_serializing_if = "BTreeSet::is_empty", default)
     )]
-    pub expected_return_codes: BTreeSet<ExpectedReturnCodes>,
+    pub expected_return_codes: BTreeSet<ExpectedReturnCode>,
 
     /// What the Windows Package Manager should do regarding the currently installed package during
     /// a package upgrade.
