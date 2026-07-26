@@ -2,6 +2,7 @@ use core::fmt;
 
 use icu_locale::LanguageIdentifier;
 
+/// The type of the manifest.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]

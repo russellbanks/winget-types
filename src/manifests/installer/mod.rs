@@ -35,7 +35,7 @@ pub use authentication::Authentication;
 pub use capability::{Capability, CapabilityError, RestrictedCapability};
 pub use channel::{Channel, ChannelError};
 pub use command::{Command, CommandError};
-pub use dependencies::{Dependencies, PackageDependencies};
+pub use dependencies::{Dependencies, PackageDependency};
 pub use elevation_requirement::ElevationRequirement;
 pub use expected_return_code::ExpectedReturnCode;
 pub use file_extension::{FileExtension, FileExtensionError};
@@ -56,12 +56,12 @@ pub use protocol::{Protocol, ProtocolError};
 pub use repair_behavior::RepairBehavior;
 pub use return_response::ReturnResponse;
 pub use scope::{Scope, ScopeParseError};
-pub use switches::InstallerSwitches;
+pub use switches::Switches;
 pub use unsupported_arguments::UnsupportedArguments;
 pub use unsupported_os_architectures::UnsupportedOSArchitecture;
 pub use upgrade_behavior::{UpgradeBehavior, UpgradeBehaviorParseError};
 
-use super::{
+use crate::{
     LanguageTag, Manifest, ManifestType, ManifestVersion, PackageIdentifier, PackageVersion,
     Sha256String, url::DecodedUrl,
 };
@@ -88,30 +88,34 @@ type Date = jiff::civil::Date;
 #[cfg(not(any(feature = "chrono", feature = "time", feature = "jiff")))]
 type Date = compact_str::CompactString;
 
-#[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "PascalCase"))]
 pub struct InstallerManifest {
     /// The unique identifier for a given package.
     ///
-    /// This value is generally in the form of `Publisher.Package`. It is case-sensitive, and this
-    /// value must match the folder structure under the partition directory in GitHub.
+    /// This value is generally in the form of `Publisher.Package`. It is
+    /// case-sensitive, and must match the folder structure under the partition
+    /// directory in GitHub.
     pub package_identifier: PackageIdentifier,
 
     /// The version of the package.
     ///
-    /// It is related to the specific release this manifests targets. In some cases you will see a
-    /// perfectly formed [semantic version] number, and in other cases you might see something
-    /// different. These may be date driven, or they might have other characters with some package
-    /// specific meaning for example.
+    /// It is related to the specific release this manifests targets. In some
+    /// cases you will see a perfectly formed [semantic version] number, and in
+    /// other cases you might see something different. These may be date driven,
+    /// or they might have other characters with some package specific meaning
+    /// for example.
     ///
-    /// The Windows Package Manager client uses this version to determine if an upgrade for a
-    /// package is available. In some cases, packages may be released with a marketing driven
-    /// version, and that causes trouble with the [`winget upgrade`] command.
+    /// The Windows Package Manager client uses this version to determine if an
+    /// upgrade for a package is available. In some cases, packages may be
+    /// released with a marketing driven version, and that causes trouble with
+    /// the [`winget upgrade`] command.
     ///
-    /// The current best practice is to use the value reported in Add / Remove Programs when this
-    /// version of the package is installed. In some cases, packages do not report a version
-    /// resulting in an upgrade loop or other unwanted behavior.
+    /// The current best practice is to use the value reported in Add / Remove
+    /// Programs when this version of the package is installed. In some cases,
+    /// packages do not report a version resulting in an upgrade loop or other
+    /// unwanted behavior.
     ///
     /// [semantic version]: https://semver.org/
     /// [`winget upgrade`]: https://docs.microsoft.com/windows/package-manager/winget/upgrade
@@ -183,11 +187,10 @@ pub struct InstallerManifest {
     ///
     /// The two configurations are [`user`] and [`machine`]. Some installers support only one of
     /// these scopes while others support both via arguments passed to the installer using
-    /// [`InstallerSwitches`].
+    /// [`Switches`].
     ///
     /// [`user`]: Scope::User
     /// [`machine`]: Scope::Machine
-    /// [`InstallerSwitches`]: InstallerSwitches
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub scope: Option<Scope>,
 
@@ -206,11 +209,11 @@ pub struct InstallerManifest {
         feature = "serde",
         serde(
             rename = "InstallerSwitches",
-            skip_serializing_if = "InstallerSwitches::is_empty",
+            skip_serializing_if = "Switches::is_empty",
             default
         )
     )]
-    pub switches: InstallerSwitches,
+    pub switches: Switches,
 
     /// Any status codes returned by the installer representing a success condition other than zero.
     #[cfg_attr(
@@ -464,9 +467,74 @@ pub struct InstallerManifest {
     pub manifest_version: ManifestVersion,
 }
 
+impl Default for InstallerManifest {
+    fn default() -> Self {
+        Self {
+            package_identifier: PackageIdentifier::default(),
+            package_version: PackageVersion::default(),
+            channel: None,
+            locale: None,
+            platform: Platform::default(),
+            minimum_os_version: None,
+            r#type: None,
+            nested_installer_type: None,
+            nested_installer_files: BTreeSet::default(),
+            scope: None,
+            install_modes: InstallModes::default(),
+            switches: Switches::default(),
+            success_codes: BTreeSet::default(),
+            expected_return_codes: BTreeSet::default(),
+            upgrade_behavior: None,
+            commands: BTreeSet::default(),
+            protocols: BTreeSet::default(),
+            file_extensions: BTreeSet::default(),
+            dependencies: Dependencies::default(),
+            package_family_name: None,
+            product_code: None,
+            capabilities: BTreeSet::default(),
+            restricted_capabilities: BTreeSet::default(),
+            markets: None,
+            aborts_terminal: false,
+            release_date: None,
+            install_location_required: false,
+            require_explicit_upgrade: false,
+            display_install_warnings: false,
+            unsupported_os_architectures: UnsupportedOSArchitecture::default(),
+            unsupported_arguments: UnsupportedArguments::default(),
+            apps_and_features_entries: AppsAndFeaturesEntries::default(),
+            elevation_requirement: None,
+            installation_metadata: InstallationMetadata::default(),
+            download_command_prohibited: false,
+            repair_behavior: None,
+            archive_binaries_depend_on_path: false,
+            authentication: None,
+            installers: Vec::default(),
+            manifest_type: ManifestType::Installer,
+            manifest_version: ManifestVersion::default(),
+        }
+    }
+}
+
 impl Manifest for InstallerManifest {
     const SCHEMA: &'static str = "https://aka.ms/winget-manifest.installer.1.12.0.schema.json";
+
     const TYPE: ManifestType = ManifestType::Installer;
+
+    fn package_identifier(&self) -> &PackageIdentifier {
+        &self.package_identifier
+    }
+
+    fn package_version(&self) -> &PackageVersion {
+        &self.package_version
+    }
+
+    fn manifest_version(&self) -> ManifestVersion {
+        self.manifest_version
+    }
+
+    fn update_manifest_version(&mut self) {
+        self.manifest_version.update();
+    }
 }
 
 impl InstallerManifest {
@@ -522,7 +590,7 @@ impl InstallerManifest {
             file_extensions,
             dependencies.windows_features,
             dependencies.windows_libraries,
-            dependencies.package,
+            dependencies.packages,
             dependencies.external,
             package_family_name,
             product_code,
@@ -590,10 +658,12 @@ pub struct Installer {
 
     /// The installer type for the package.
     ///
-    /// The Windows Package Manager supports [MSIX], [MSI], and executable installers. Some well
-    /// known formats ([Inno], [Nullsoft], [WiX], and [Burn]) provide standard sets of installer
-    /// switches to provide different installer experiences. Portable packages are supported as of
-    /// Windows Package Manager 1.3. Zip packages are supported as of Windows Package Manager 1.5.
+    /// The Windows Package Manager supports [MSIX], [MSI], and executable
+    /// installers. Some well known formats ([Inno], [Nullsoft], [WiX], and [Burn])
+    /// provide standard sets of installer switches to provide different
+    /// installer experiences. Portable packages are supported as of Windows
+    /// Package Manager 1.3. Zip packages are supported as of Windows Package
+    /// Manager 1.5.
     ///
     /// [MSIX]: https://docs.microsoft.com/windows/msix/overview
     /// [MSI]: https://docs.microsoft.com/windows/win32/msi/windows-installer-portal
@@ -607,7 +677,8 @@ pub struct Installer {
     )]
     pub r#type: Option<InstallerType>,
 
-    /// The installer type of the file within the archive which will be used as the installer.
+    /// The installer type of the file within the archive which will be used as
+    /// the installer.
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub nested_installer_type: Option<NestedInstallerType>,
 
@@ -620,13 +691,12 @@ pub struct Installer {
 
     /// The scope the package is installed under.
     ///
-    /// The two configurations are [`user`] and [`machine`]. Some installers support only one of
-    /// these scopes while others support both via arguments passed to the installer using
-    /// [`InstallerSwitches`].
+    /// The two configurations are [`user`] and [`machine`]. Some installers
+    /// support only one of these scopes while others support both via arguments
+    /// passed to the installer using [`Switches`].
     ///
     /// [`user`]: Scope::User
     /// [`machine`]: Scope::Machine
-    /// [`InstallerSwitches`]: InstallerSwitches
     #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub scope: Option<Scope>,
 
@@ -660,11 +730,11 @@ pub struct Installer {
         feature = "serde",
         serde(
             rename = "InstallerSwitches",
-            skip_serializing_if = "InstallerSwitches::is_empty",
+            skip_serializing_if = "Switches::is_empty",
             default
         )
     )]
-    pub switches: InstallerSwitches,
+    pub switches: Switches,
 
     /// Any status codes returned by the installer representing a success condition other than zero.
     #[cfg_attr(
@@ -903,6 +973,10 @@ pub struct Installer {
 }
 
 impl Installer {
+    pub fn scope(&self, installer_manifest: &InstallerManifest) -> Option<Scope> {
+        self.scope.or(installer_manifest.scope)
+    }
+
     /// Merges two installers.
     ///
     /// If a key of `self` is equal to its default, it will take the value from `other`. If the key
@@ -1003,8 +1077,8 @@ mod tests {
     use alloc::vec;
 
     use crate::{
-        installer::{Architecture, Installer, InstallerManifest, InstallerSwitches},
-        shared::LanguageTag,
+        LanguageTag,
+        installer::{Architecture, Installer, InstallerManifest, Switches},
     };
 
     #[test]
@@ -1052,7 +1126,7 @@ mod tests {
             installers: vec![
                 Installer {
                     architecture: Architecture::X86,
-                    switches: InstallerSwitches::builder()
+                    switches: Switches::builder()
                         .maybe_silent("--silent".parse().ok())
                         .maybe_custom("--custom".parse().ok())
                         .build(),
@@ -1060,7 +1134,7 @@ mod tests {
                 },
                 Installer {
                     architecture: Architecture::X64,
-                    switches: InstallerSwitches::builder()
+                    switches: Switches::builder()
                         .maybe_silent("--silent".parse().ok())
                         .build(),
                     ..Installer::default()
@@ -1074,13 +1148,13 @@ mod tests {
         assert_eq!(
             manifest,
             InstallerManifest {
-                switches: InstallerSwitches::builder()
+                switches: Switches::builder()
                     .maybe_silent("--silent".parse().ok())
                     .build(),
                 installers: vec![
                     Installer {
                         architecture: Architecture::X86,
-                        switches: InstallerSwitches::builder()
+                        switches: Switches::builder()
                             .maybe_custom("--custom".parse().ok())
                             .build(),
                         ..Installer::default()

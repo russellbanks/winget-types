@@ -5,6 +5,11 @@ use thiserror::Error;
 
 use super::DISALLOWED_CHARACTERS;
 
+/// The unique identifier for a given package.
+///
+/// This value is generally in the form of `Publisher.Package`. It is
+/// case-sensitive, and must match the folder structure under the partition
+/// directory in GitHub.
 #[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "CompactString"))]
@@ -160,7 +165,7 @@ mod tests {
     use indoc::indoc;
     use rstest::rstest;
 
-    use crate::shared::{
+    use crate::{
         DISALLOWED_CHARACTERS,
         package_identifier::{PackageIdentifier, PackageIdentifierError},
     };

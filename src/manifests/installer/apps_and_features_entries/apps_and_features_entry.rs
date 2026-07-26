@@ -4,7 +4,7 @@ use core::fmt;
 use bon::Builder;
 use compact_str::CompactString;
 
-use crate::{Version, installer::InstallerType, locale::DefaultLocaleManifest};
+use crate::{Manifest, Version, installer::InstallerType, locale::DefaultLocaleManifest};
 
 #[derive(Builder, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -75,6 +75,7 @@ impl AppsAndFeaturesEntry {
     /// Returns `true` if all the `AppsAndFeatureEntry` fields are `None`.
     ///
     /// # Examples
+    ///
     /// ```
     /// # use winget_types::installer::{AppsAndFeaturesEntry, InstallerType};
     /// assert!(AppsAndFeaturesEntry::default().is_empty());
@@ -111,7 +112,7 @@ impl AppsAndFeaturesEntry {
             .display_version
             .as_ref()
             .is_some_and(|display_version| {
-                display_version == &default_locale_manifest.package_version
+                display_version == default_locale_manifest.package_version()
             })
         {
             self.display_version = None;

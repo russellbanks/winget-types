@@ -1,7 +1,9 @@
-use super::ManifestType;
+use crate::ManifestType;
 
-/// A manifest where the only field is the type of the manifest itself. Useful for deserializing
-/// once into this type to determine which manifest to properly deserialize into.
+/// A manifest where the only field is the type of the manifest itself.
+///
+/// This is useful for deserializing once into this type to determine which
+/// manifest to properly deserialize into.
 #[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct GenericManifest {

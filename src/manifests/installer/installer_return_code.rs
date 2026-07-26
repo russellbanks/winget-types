@@ -9,8 +9,8 @@ pub type InstallerSuccessCode = InstallerReturnCode;
 
 /// An exit code that can be returned by an installer after execution.
 ///
-/// An `InstallerReturnCode` has the possible range of ([`i32::MIN`]..=-1, 1..=[`u32::MAX`]) and
-/// cannot be 0.
+/// An `InstallerReturnCode` has the possible range of
+/// [`i32::MIN`]..=-1, 1..=[`u32::MAX`]) and cannot be 0.
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(untagged))]
@@ -391,7 +391,9 @@ impl_return_code_from_signed_int!(i8 => u8, i16 => u16, i32 => u32);
 
 #[cfg(test)]
 mod tests {
-    use core::num::{IntErrorKind, NonZeroU32};
+    use core::num::IntErrorKind;
+    #[cfg(feature = "serde")]
+    use core::num::NonZeroU32;
 
     #[cfg(feature = "serde")]
     use indoc::indoc;
@@ -402,11 +404,23 @@ mod tests {
     #[test]
     fn size() {
         assert_eq!(size_of::<InstallerReturnCode>(), size_of::<u64>());
+
+        // Null pointer optimization
+        assert_eq!(
+            size_of::<InstallerReturnCode>(),
+            size_of::<Option<InstallerReturnCode>>()
+        );
     }
 
     #[test]
     fn alignment() {
         assert_eq!(align_of::<InstallerReturnCode>(), align_of::<u32>());
+
+        // Null pointer optimization
+        assert_eq!(
+            align_of::<InstallerReturnCode>(),
+            align_of::<Option<InstallerReturnCode>>()
+        );
     }
 
     #[rstest]

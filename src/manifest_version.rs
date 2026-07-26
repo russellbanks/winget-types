@@ -76,6 +76,12 @@ impl ManifestVersion {
     pub const fn patch(&self) -> u16 {
         self.2
     }
+
+    /// Updates the manifest version to the [latest](Self::DEFAULT) version.
+    #[inline]
+    pub const fn update(&mut self) {
+        *self = Self::DEFAULT;
+    }
 }
 
 impl Default for ManifestVersion {

@@ -149,6 +149,14 @@ mod tests {
         "},
         UnsupportedArguments::LOCATION
     )]
+    #[case(
+        indoc! {"
+            - Location
+            - Location
+            - Location
+        "},
+        UnsupportedArguments::LOCATION
+    )]
     fn deserialize_unsupported_arguments(
         #[case] input: &str,
         #[case] expected: UnsupportedArguments,

@@ -31,14 +31,13 @@ pub use short_description::{ShortDescription, ShortDescriptionError};
 pub use tag::{Tag, TagError};
 use url::Url;
 
-use super::{
+use crate::{
     LanguageTag, Manifest, ManifestType, ManifestVersion, PackageIdentifier, PackageVersion,
     url::{
         CopyrightUrl, LicenseUrl, PackageUrl, PublisherSupportUrl, PublisherUrl, ReleaseNotesUrl,
     },
 };
 
-#[derive(Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "PascalCase"))]
 pub struct DefaultLocaleManifest {
@@ -259,10 +258,60 @@ pub struct DefaultLocaleManifest {
     pub manifest_version: ManifestVersion,
 }
 
+impl Default for DefaultLocaleManifest {
+    fn default() -> Self {
+        Self {
+            package_identifier: PackageIdentifier::default(),
+            package_version: PackageVersion::default(),
+            package_locale: LanguageTag::default(),
+            publisher: Publisher::default(),
+            publisher_url: None,
+            publisher_support_url: None,
+            privacy_url: None,
+            author: None,
+            package_name: PackageName::default(),
+            package_url: None,
+            license: License::default(),
+            license_url: None,
+            copyright: None,
+            copyright_url: None,
+            short_description: ShortDescription::default(),
+            description: None,
+            moniker: None,
+            tags: BTreeSet::default(),
+            agreements: BTreeSet::default(),
+            release_notes: None,
+            release_notes_url: None,
+            purchase_url: None,
+            installation_notes: None,
+            documentations: BTreeSet::default(),
+            icons: BTreeSet::default(),
+            manifest_type: ManifestType::DefaultLocale,
+            manifest_version: ManifestVersion::default(),
+        }
+    }
+}
+
 impl Manifest for DefaultLocaleManifest {
     const SCHEMA: &'static str = "https://aka.ms/winget-manifest.defaultLocale.1.12.0.schema.json";
 
     const TYPE: ManifestType = ManifestType::DefaultLocale;
+
+    fn package_identifier(&self) -> &PackageIdentifier {
+        &self.package_identifier
+    }
+
+    fn package_version(&self) -> &PackageVersion {
+        &self.package_version
+    }
+
+    fn manifest_version(&self) -> ManifestVersion {
+        self.manifest_version
+    }
+
+    fn update_manifest_version(&mut self) {
+        self.manifest_version.update();
+    }
 }
 
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -474,8 +523,57 @@ pub struct LocaleManifest {
     pub manifest_version: ManifestVersion,
 }
 
+impl Default for LocaleManifest {
+    fn default() -> Self {
+        Self {
+            package_identifier: PackageIdentifier::default(),
+            package_version: PackageVersion::default(),
+            package_locale: LanguageTag::default(),
+            publisher: None,
+            publisher_url: None,
+            publisher_support_url: None,
+            privacy_url: None,
+            author: None,
+            package_name: None,
+            package_url: None,
+            license: None,
+            license_url: None,
+            copyright: None,
+            copyright_url: None,
+            short_description: None,
+            description: None,
+            tags: BTreeSet::default(),
+            agreements: BTreeSet::default(),
+            release_notes: None,
+            release_notes_url: None,
+            purchase_url: None,
+            installation_notes: None,
+            documentations: BTreeSet::default(),
+            icons: BTreeSet::default(),
+            manifest_type: ManifestType::Locale,
+            manifest_version: ManifestVersion::default(),
+        }
+    }
+}
+
 impl Manifest for LocaleManifest {
     const SCHEMA: &'static str = "https://aka.ms/winget-manifest.locale.1.12.0.schema.json";
 
     const TYPE: ManifestType = ManifestType::Locale;
+
+    fn package_identifier(&self) -> &PackageIdentifier {
+        &self.package_identifier
+    }
+
+    fn package_version(&self) -> &PackageVersion {
+        &self.package_version
+    }
+
+    fn manifest_version(&self) -> ManifestVersion {
+        self.manifest_version
+    }
+
+    fn update_manifest_version(&mut self) {
+        self.manifest_version.update();
+    }
 }

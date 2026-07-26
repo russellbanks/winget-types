@@ -1,6 +1,6 @@
 use crate::{
     installer::{installer_return_code::InstallerReturnCode, return_response::ReturnResponse},
-    shared::url::DecodedUrl,
+    url::DecodedUrl,
 };
 
 /// An expected return code.
@@ -37,7 +37,7 @@ impl ExpectedReturnCode {
     ///
     ///# fn test() -> Option<()> {
     /// let expected_return_code = ExpectedReturnCode::new(
-    ///     InstallerReturnCode::new(3_010)?,
+    ///     InstallerReturnCode::new(3010)?,
     ///     ReturnResponse::RebootRequiredToFinish,
     /// );
     ///

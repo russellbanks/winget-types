@@ -19,7 +19,7 @@ pub use super::switches::{
 #[derive(Builder, Clone, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "PascalCase"))]
-pub struct InstallerSwitches {
+pub struct Switches {
     /// Switches passed to the installer to provide a silent install experience.
     ///
     /// These would be used when the command `winget install <package> --silent` is executed.
@@ -75,7 +75,7 @@ pub struct InstallerSwitches {
     pub(crate) repair: Option<RepairSwitch>,
 }
 
-impl InstallerSwitches {
+impl Switches {
     /// Returns the silent switch, if any.
     #[must_use]
     #[inline]
@@ -130,12 +130,12 @@ impl InstallerSwitches {
     /// # Examples
     ///
     /// ```
-    /// use winget_types::installer::{switches, InstallerSwitches};
+    /// use winget_types::installer::{switches, Switches};
     ///
-    /// let switches = InstallerSwitches::builder().build();
+    /// let switches = Switches::builder().build();
     /// assert!(switches.is_empty());
     ///
-    /// let switches = InstallerSwitches::builder().maybe_silent("--silent".parse().ok()).build();
+    /// let switches = Switches::builder().maybe_silent("--silent".parse().ok()).build();
     /// assert!(!switches.is_empty());
     /// ```
     #[must_use]
@@ -151,7 +151,7 @@ impl InstallerSwitches {
     }
 }
 
-impl Default for InstallerSwitches {
+impl Default for Switches {
     fn default() -> Self {
         Self::builder().build()
     }

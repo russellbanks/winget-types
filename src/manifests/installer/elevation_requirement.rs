@@ -4,13 +4,13 @@ use core::fmt;
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "camelCase"))]
 pub enum ElevationRequirement {
-    /// Must be run from a shell that is running in an administrative context (e.g - Admin user
-    /// using powershell/terminal/cmd with "Run as Administrator")
+    /// Must be run from a shell that is running in an administrative context
+    /// (e.g - Admin user using powershell/terminal/cmd with "Run as Administrator")
     ElevationRequired,
     /// Must be run from a shell that is not running in an administrative context.
     ElevationProhibited,
-    /// If called from a non-administrative context, will request elevation. If called from an
-    /// administrative context, may or may not request elevation.
+    /// If called from a non-administrative context, will request elevation.
+    /// If called from an administrative context, may or may not request elevation.
     ElevatesSelf,
 }
 

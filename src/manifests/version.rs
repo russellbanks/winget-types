@@ -1,0 +1,132 @@
+use crate::{
+    LanguageTag, Manifest, ManifestType, ManifestVersion, PackageIdentifier, PackageVersion,
+};
+
+#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "PascalCase"))]
+pub struct VersionManifest {
+    /// The unique identifier for a given package.
+    ///
+    /// This value is generally in the form of `Publisher.Package`. It is case-sensitive, and this
+    /// value must match the folder structure under the partition directory in GitHub.
+    pub package_identifier: PackageIdentifier,
+
+    /// The version of the package.
+    ///
+    /// It is related to the specific release this manifests targets. In some cases you will see a
+    /// perfectly formed [semantic version] number, and in other cases you might see something
+    /// different. These may be date driven, or they might have other characters with some package
+    /// specific meaning for example.
+    ///
+    /// The Windows Package Manager client uses this version to determine if an upgrade for a
+    /// package is available. In some cases, packages may be released with a marketing driven
+    /// version, and that causes trouble with the [`winget upgrade`] command.
+    ///
+    /// The current best practice is to use the value reported in Add / Remove Programs when this
+    /// version of the package is installed. In some cases, packages do not report a version
+    /// resulting in an upgrade loop or other unwanted behavior.
+    ///
+    /// [semantic version]: https://semver.org/
+    /// [`winget upgrade`]: https://docs.microsoft.com/windows/package-manager/winget/upgrade
+    pub package_version: PackageVersion,
+
+    /// The default locale for package metadata.
+    ///
+    /// The format is BCP-47. This value identifies the language for meta-data to be displayed to a
+    /// user when no locale file matching their preferences is available.
+    ///
+    /// The validation pipelines use this value to ensure the corresponding locale file is present
+    /// and conforms with the defaultLocale YAML specification.
+    default_locale: LanguageTag,
+
+    /// The manifest type.
+    ///
+    /// Must have the value [`version`]. The Microsoft community package repository validation
+    /// pipelines also use this value to determine appropriate validation rules when evaluating this
+    /// file.
+    ///
+    /// [`version`]: ManifestType::Version
+    #[cfg_attr(feature = "serde", serde(default = "ManifestType::version"))]
+    manifest_type: ManifestType,
+
+    /// The manifest syntax version.
+    ///
+    /// Must have the value `1.12.0`. The Microsoft community package repository validation
+    /// pipelines also use this value to determine appropriate validation rules when evaluating this
+    /// file.
+    #[cfg_attr(feature = "serde", serde(default))]
+    manifest_version: ManifestVersion,
+}
+
+impl VersionManifest {
+    /// Creates a new [`VersionManifest`] from a [`PackageIdentifier`], a
+    /// [`PackageVersion`], and a default locale tag.
+    pub fn new(
+        package_identifier: PackageIdentifier,
+        package_version: PackageVersion,
+        default_locale: LanguageTag,
+    ) -> Self {
+        Self {
+            package_identifier,
+            package_version,
+            default_locale,
+            manifest_type: ManifestType::Version,
+            manifest_version: ManifestVersion::default(),
+        }
+    }
+
+    /// Returns the default locale.
+    #[must_use]
+    #[inline]
+    pub const fn default_locale(&self) -> &LanguageTag {
+        &self.default_locale
+    }
+
+    /// Returns the manifest version.
+    #[must_use]
+    #[inline]
+    pub const fn manifest_version(&self) -> ManifestVersion {
+        self.manifest_version
+    }
+
+    pub fn update(&mut self, package_version: &PackageVersion) {
+        self.package_version.clone_from(package_version);
+        self.manifest_type = ManifestType::Version;
+        self.update_manifest_version();
+    }
+}
+
+impl Manifest for VersionManifest {
+    const SCHEMA: &'static str = "https://aka.ms/winget-manifest.version.1.12.0.schema.json";
+
+    const TYPE: ManifestType = ManifestType::Version;
+
+    fn package_identifier(&self) -> &PackageIdentifier {
+        &self.package_identifier
+    }
+
+    fn package_version(&self) -> &PackageVersion {
+        &self.package_version
+    }
+
+    fn manifest_version(&self) -> ManifestVersion {
+        self.manifest_version
+    }
+
+    fn update_manifest_version(&mut self) {
+        self.manifest_version.update();
+    }
+}
+
+impl Default for VersionManifest {
+    fn default() -> Self {
+        Self {
+            package_identifier: PackageIdentifier::default(),
+            package_version: PackageVersion::default(),
+            default_locale: LanguageTag::default(),
+            manifest_type: ManifestType::Version,
+            manifest_version: ManifestVersion::default(),
+        }
+    }
+}

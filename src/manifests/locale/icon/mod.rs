@@ -1,13 +1,13 @@
-pub mod file_type;
-pub mod resolution;
-pub mod theme;
+mod file_type;
+mod resolution;
+mod theme;
 
+pub use file_type::IconFileType;
+pub use resolution::IconResolution;
+pub use theme::IconTheme;
 use url::Url;
 
-use crate::{
-    locale::icon::{file_type::IconFileType, resolution::IconResolution, theme::IconTheme},
-    shared::Sha256String,
-};
+use crate::Sha256String;
 
 #[derive(Ord, PartialOrd, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -36,5 +36,18 @@ pub struct Icon {
         feature = "serde",
         serde(rename = "IconSha256", skip_serializing_if = "Option::is_none")
     )]
-    pub sha_256: Option<Sha256String>,
+    pub sha256: Option<Sha256String>,
+}
+
+impl Icon {
+    /// Creates a new [`Icon`] from a [`Url`] and an [`IconFileType`].
+    pub fn new(url: Url, file_type: IconFileType) -> Self {
+        Self {
+            url,
+            file_type,
+            resolution: None,
+            theme: None,
+            sha256: None,
+        }
+    }
 }
