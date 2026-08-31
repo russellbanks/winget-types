@@ -48,3 +48,27 @@ impl Ord for LanguageTag {
         self.0.total_cmp(&other.0)
     }
 }
+
+impl PartialEq<LanguageIdentifier> for LanguageTag {
+    fn eq(&self, other: &LanguageIdentifier) -> bool {
+        self.0.eq(other)
+    }
+}
+
+impl PartialOrd<LanguageIdentifier> for LanguageTag {
+    fn partial_cmp(&self, other: &LanguageIdentifier) -> Option<Ordering> {
+        Some(self.0.total_cmp(other))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use icu_locale::langid;
+
+    use super::LanguageTag;
+
+    #[test]
+    fn language_identifier_partial_eq() {
+        assert_eq!(LanguageTag::new(langid!("en-US")), langid!("en-US"));
+    }
+}
