@@ -11,8 +11,8 @@ bitflags! {
     }
 }
 
-const LOG: &str = "Log";
-const LOCATION: &str = "Location";
+const LOG: &str = "log";
+const LOCATION: &str = "location";
 
 impl fmt::Display for UnsupportedArguments {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -94,8 +94,8 @@ mod tests {
     #[case(
         UnsupportedArguments::all(),
         indoc! {"
-            - Log
-            - Location
+            - log
+            - location
         "}
     )]
     #[case(
@@ -107,13 +107,13 @@ mod tests {
     #[case(
         UnsupportedArguments::LOG,
         indoc! {"
-            - Log
+            - log
         "}
     )]
     #[case(
         UnsupportedArguments::LOCATION,
         indoc! {"
-            - Location
+            - location
         "}
     )]
     fn serialize_unsupported_arguments(
@@ -126,8 +126,8 @@ mod tests {
     #[rstest]
     #[case(
         indoc! {"
-            - Log
-            - Location
+            - log
+            - location
         "},
         UnsupportedArguments::all(),
     )]
@@ -139,21 +139,21 @@ mod tests {
     )]
     #[case(
         indoc! {"
-            - Log
+            - log
         "},
         UnsupportedArguments::LOG,
     )]
     #[case(
         indoc! {"
-            - Location
+            - location
         "},
         UnsupportedArguments::LOCATION
     )]
     #[case(
         indoc! {"
-            - Location
-            - Location
-            - Location
+            - location
+            - location
+            - location
         "},
         UnsupportedArguments::LOCATION
     )]
@@ -170,8 +170,8 @@ mod tests {
     #[test]
     fn unsupported_arguments_serialize_ordered() {
         let input = indoc! {"
-            - Location
-            - Log
+            - location
+            - log
         "};
 
         let deserialized = serde_yaml::from_str::<UnsupportedArguments>(input).unwrap();
@@ -179,8 +179,8 @@ mod tests {
         assert_eq!(
             serde_yaml::to_string(&deserialized).unwrap(),
             indoc! {"
-                - Log
-                - Location
+                - log
+                - location
             "}
         );
     }
