@@ -20,7 +20,7 @@ pub enum Architecture {
 #[error("Failed to parse as valid Architecture")]
 pub struct ParseArchitectureError;
 
-const DELIMITERS: [u8; 8] = [b',', b'/', b'\\', b'.', b'_', b'-', b'(', b')'];
+const DELIMITERS: [u8; 8] = *b",/\\._-()";
 
 const ARCHITECTURES: [(&str, Architecture); 32] = [
     ("x86-64", Architecture::X64),

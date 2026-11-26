@@ -2,7 +2,7 @@ mod installed_file;
 
 use alloc::collections::BTreeSet;
 
-use installed_file::InstalledFile;
+pub use installed_file::{InstalledFile, InstalledFileType};
 
 use crate::PathBuf;
 

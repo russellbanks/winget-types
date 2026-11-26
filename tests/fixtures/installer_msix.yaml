@@ -1,0 +1,25 @@
+PackageIdentifier: Contoso.Store
+PackageVersion: 3.4.5.0
+Platform:
+- Windows.Desktop
+- Windows.Universal
+MinimumOSVersion: 10.0.19041.0
+InstallerType: msix
+PackageFamilyName: Contoso.Store_8wekyb3d8bbwe
+Capabilities:
+- internetClient
+RestrictedCapabilities:
+- runFullTrust
+Markets:
+  AllowedMarkets:
+  - GB
+  - US
+UnsupportedOSArchitectures:
+- arm
+Installers:
+- Architecture: x64
+  InstallerUrl: https://contoso.com/downloads/Contoso.Store_3.4.5.0_x64.msixbundle
+  InstallerSha256: AAAABBBBCCCCDDDDEEEEFFFF0000111122223333444455556666777788889999
+  SignatureSha256: 9999888877776666555544443333222211110000FFFFEEEEDDDDCCCCBBBBAAAA
+ManifestType: installer
+ManifestVersion: 1.28.0

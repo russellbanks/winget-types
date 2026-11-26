@@ -1,6 +1,6 @@
 mod label;
 
-pub use label::DocumentLabel;
+pub use label::{DocumentLabel, DocumentLabelError};
 use url::Url;
 
 #[derive(Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]

@@ -1,0 +1,13 @@
+PackageIdentifier: Contoso.App
+PackageVersion: 1.2.3
+PackageLocale: de-DE
+Publisher: Contoso GmbH
+PackageName: Contoso App
+License: MIT
+ShortDescription: Eine Beispielanwendung zum Testen von Manifesten.
+Tags:
+- beispiel
+- produktivität
+ReleaseNotesUrl: https://github.com/contoso/app/releases/tag/v1.2.3
+ManifestType: locale
+ManifestVersion: 1.28.0

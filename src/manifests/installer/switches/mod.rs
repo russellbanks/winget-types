@@ -11,9 +11,15 @@ mod upgrade;
 use bon::Builder;
 
 pub use super::switches::{
-    custom::CustomSwitch, install_location::InstallLocationSwitch, interactive::InteractiveSwitch,
-    log::LogSwitch, repair::RepairSwitch, silent::SilentSwitch,
-    silent_with_progress::SilentWithProgressSwitch, upgrade::UpgradeSwitch,
+    custom::CustomSwitch,
+    install_location::InstallLocationSwitch,
+    interactive::InteractiveSwitch,
+    log::LogSwitch,
+    repair::RepairSwitch,
+    silent::SilentSwitch,
+    silent_with_progress::SilentWithProgressSwitch,
+    switch::{InstallerSwitch, SwitchError},
+    upgrade::UpgradeSwitch,
 };
 
 #[derive(Builder, Clone, Debug, Eq, PartialEq, Hash, Ord, PartialOrd)]

@@ -35,13 +35,12 @@ impl Version {
 
         // If there is a digit before the separator, or no separators, trim off all leading
         // non-digit characters
-        if let Some(digit_pos) = raw_version.find(|char: char| char.is_ascii_digit()) {
-            if raw_version
+        if let Some(digit_pos) = raw_version.find(|char: char| char.is_ascii_digit())
+            && raw_version
                 .find('.')
                 .is_none_or(|separator_pos| digit_pos < separator_pos)
-            {
-                version = &raw_version[digit_pos..];
-            }
+        {
+            version = &raw_version[digit_pos..];
         }
 
         // Split the version into parts by the separator `.`
@@ -409,7 +408,7 @@ mod tests {
     #[case("0.0.2", &["0.0.1", "0.0.3", "0.2.0"], "0.0.3")]
     #[case("999.999.999", &["999.999.998", "1000.0.0"], "999.999.998")]
     fn closest_version(#[case] version: &str, #[case] versions: &[&str], #[case] expected: &str) {
-        let versions = versions.into_iter().map(Version::new).collect::<Vec<_>>();
+        let versions = versions.iter().map(Version::new).collect::<Vec<_>>();
         assert_eq!(
             Version::new(version).closest(&versions),
             Some(&Version::new(expected))

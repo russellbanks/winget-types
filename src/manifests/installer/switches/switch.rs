@@ -206,7 +206,7 @@ mod tests {
         let all_users_switch = ALL_USERS.parse::<LogSwitch>().unwrap();
 
         assert!(all_users_switch.contains(ALL_USERS));
-        assert!(all_users_switch.contains(&ALL_USERS.to_ascii_lowercase()))
+        assert!(all_users_switch.contains(ALL_USERS.to_ascii_lowercase()))
     }
 
     #[test]

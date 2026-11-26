@@ -37,6 +37,66 @@ jobs:
       - name: Run tests
         run: cargo test --all-features
 
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+          cache-bin: false
+
+      - name: Run Clippy
+        run: cargo clippy --all-features --all-targets -- -D warnings
+
+  rustfmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      # rustfmt.toml uses unstable options, so formatting must be checked with nightly
+      - name: Install Rust nightly
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt
+
+      - name: Check formatting
+        run: cargo fmt --check
+
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+
+    env:
+      RUSTDOCFLAGS: -D warnings
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+          cache-bin: false
+
+      - name: Build documentation
+        run: cargo doc --all-features --no-deps
+
   publish_dry_run:
     name: Publish dry run
     runs-on: ubuntu-latest
@@ -84,7 +144,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Check for unused dependencies
-        uses: bnjbvr/cargo-machete@main
+        uses: bnjbvr/cargo-machete@v0.10.1
 
   minimal_versions:
     name: Minimal dependency versions

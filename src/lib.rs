@@ -17,13 +17,16 @@ pub use camino;
 pub use icu_locale;
 pub use manifest::Manifest;
 pub use manifest_type::{ManifestType, ManifestTypeWithLocale};
-pub use manifest_version::ManifestVersion;
+pub use manifest_version::{ManifestVersion, ManifestVersionError};
 pub use manifests::*;
 pub use package_family_name;
 pub use package_identifier::{PackageIdentifier, PackageIdentifierError};
 pub use package_version::{PackageVersion, PackageVersionError};
 pub use sha2;
-pub use utils::{language_tag::LanguageTag, sha_256::Sha256String};
+pub use utils::{
+    language_tag::LanguageTag,
+    sha_256::{Sha256String, Sha256StringError},
+};
 pub use version::Version;
 
 #[cfg(feature = "std")]

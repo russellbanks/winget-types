@@ -3,7 +3,7 @@ mod r#type;
 use alloc::string::String;
 
 use bon::Builder;
-use r#type::InstalledFileType;
+pub use r#type::InstalledFileType;
 
 use crate::{Path, PathBuf, Sha256String};
 
@@ -49,7 +49,7 @@ impl InstalledFile {
     pub fn relative_file_path(&self) -> &Path {
         cfg_select! {
             feature = "std" => self.file_path.as_path(),
-            _ => self.file_path.as_str()
+            _ => self.file_path.as_str(),
         }
     }
 
