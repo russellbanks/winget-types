@@ -21,7 +21,6 @@ icu_locale = { version = "2", default-features = false }
 itertools = { version = "0.15", default-features = false }
 jiff = { version = "0.2", default-features = false, optional = true }
 package-family-name = { version = "3", default-features = false }
-percent-encoding = { version = "2", default-features = false }
 serde = { version = "1", default-features = false, features = ["alloc", "derive"], optional = true }
 sha2 = { version = "0.11", default-features = false }
 smallvec = { version = "1", default-features = false, features = ["union"] }
@@ -51,7 +50,6 @@ std = [
     "compact_str/std",
     "itertools/use_std",
     "jiff?/std",
-    "percent-encoding/std",
     "serde?/std",
     "thiserror/std",
     "time?/std",

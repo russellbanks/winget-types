@@ -1,0 +1,50 @@
+PackageIdentifier: Contoso.App
+PackageVersion: 1.2.3
+Platform:
+- Windows.Desktop
+MinimumOSVersion: 10.0.17763.0
+InstallerType: wix
+InstallModes:
+- interactive
+- silent
+- silentWithProgress
+InstallerSwitches:
+  Silent: /quiet /norestart
+  SilentWithProgress: /passive /norestart
+InstallerSuccessCodes:
+- 3010
+ExpectedReturnCodes:
+- InstallerReturnCode: -2147024891
+  ReturnResponse: blockedByPolicy
+  ReturnResponseUrl: https://contoso.com/help/permissions
+- InstallerReturnCode: 1618
+  ReturnResponse: installInProgress
+UpgradeBehavior: install
+Protocols:
+- contoso
+FileExtensions:
+- ctso
+- ctsx
+ReleaseDate: 2026-10-01
+ElevationRequirement: elevatesSelf
+Installers:
+- Architecture: x86
+  Scope: user
+  InstallerUrl: https://github.com/contoso/app/releases/download/v1.2.3/ContosoApp-1.2.3-x86.msi
+  InstallerSha256: 3B4F1D2E6A8C9B0D7E5F4A3C2B1D0E9F8A7B6C5D4E3F2A1B0C9D8E7F6A5B4C3D
+  ProductCode: '{11111111-2222-3333-4444-555555555555}'
+  AppsAndFeaturesEntries:
+  - DisplayName: Contoso App (x86)
+    ProductCode: '{11111111-2222-3333-4444-555555555555}'
+    UpgradeCode: '{AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE}'
+- Architecture: x64
+  Scope: machine
+  InstallerUrl: https://github.com/contoso/app/releases/download/v1.2.3/ContosoApp-1.2.3-x64.msi
+  InstallerSha256: 0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF
+  ProductCode: '{66666666-7777-8888-9999-000000000000}'
+  AppsAndFeaturesEntries:
+  - DisplayName: Contoso App
+    ProductCode: '{66666666-7777-8888-9999-000000000000}'
+    UpgradeCode: '{AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE}'
+ManifestType: installer
+ManifestVersion: 1.28.0

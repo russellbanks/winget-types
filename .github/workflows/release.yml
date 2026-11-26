@@ -20,6 +20,17 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Check tag matches crate version
+        run: |
+          crate_version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')
+          if [ "${GITHUB_REF_NAME}" != "v${crate_version}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match crate version v${crate_version}"
+            exit 1
+          fi
+
+      - name: Run tests
+        run: cargo test --all-features
+
       - name: Retrieve temporary crates.io token
         uses: rust-lang/crates-io-auth-action@v1
         id: auth

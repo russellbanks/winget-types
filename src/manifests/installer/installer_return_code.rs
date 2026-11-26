@@ -439,7 +439,7 @@ mod tests {
     ) {
         assert_eq!(
             str.parse::<InstallerReturnCode>()
-                .map_err(|err| err.kind().clone()),
+                .map_err(|err| *err.kind()),
             int_error_kind
         );
     }

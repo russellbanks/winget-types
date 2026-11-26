@@ -208,7 +208,7 @@ mod tests {
     #[test]
     fn control_characters_in_package_version() {
         assert_eq!(
-            "1.2\03".parse::<PackageVersion>(),
+            "1.2\x003".parse::<PackageVersion>(),
             Err(PackageVersionError::InvalidCharacter('\0'))
         );
     }

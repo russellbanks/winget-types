@@ -1,0 +1,36 @@
+PackageIdentifier: Contoso.App
+PackageVersion: 1.2.3
+PackageLocale: en-US
+Publisher: Contoso Ltd.
+PublisherUrl: https://contoso.com/
+PublisherSupportUrl: https://contoso.com/support
+PrivacyUrl: https://contoso.com/privacy
+Author: Contoso Engineering
+PackageName: Contoso App
+PackageUrl: https://contoso.com/app
+License: MIT
+LicenseUrl: https://github.com/contoso/app/blob/v1.2.3/LICENSE
+Copyright: Copyright (c) Contoso Ltd.
+CopyrightUrl: https://contoso.com/copyright
+ShortDescription: A sample application used to test manifest round-trips.
+Description: |-
+  Contoso App is a sample application.
+  It has a description that spans multiple lines.
+Moniker: contoso
+Tags:
+- productivity
+- sample
+Agreements:
+- AgreementLabel: End User License Agreement
+  AgreementUrl: https://contoso.com/eula
+ReleaseNotes: |-
+  - Fixed a crash on startup
+  - Improved performance
+ReleaseNotesUrl: https://github.com/contoso/app/releases/tag/v1.2.3
+PurchaseUrl: https://contoso.com/buy
+InstallationNotes: Restart your computer after installing.
+Documentations:
+- DocumentLabel: User Guide
+  DocumentUrl: https://contoso.com/docs
+ManifestType: defaultLocale
+ManifestVersion: 1.28.0
