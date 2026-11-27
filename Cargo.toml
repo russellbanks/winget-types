@@ -19,7 +19,7 @@ compact_str = { version = "0.10", default-features = false }
 heapless = { version = "0.9", default-features = false }
 icu_locale = { version = "2", default-features = false }
 itertools = { version = "0.15", default-features = false }
-jiff = { version = "0.2", default-features = false, optional = true }
+jiff = { version = "1.0", default-features = false, optional = true }
 package-family-name = { version = "3", default-features = false }
 serde = { version = "1", default-features = false, features = ["alloc", "derive"], optional = true }
 sha2 = { version = "0.11", default-features = false }
